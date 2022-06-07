@@ -1,4 +1,3 @@
-import 'package:bip39/bip39.dart' as bip39;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:othala/models/secure_item.dart';
+import 'package:xchain_dart/xchaindart.dart' as xchain;
 
 import '../services/secure_storage.dart';
 import '../themes/theme_data.dart';
@@ -45,7 +45,7 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
 
   String? _createMnemonic() {
     // BIP39 English word list
-    _randomMnemonic = bip39.generateMnemonic();
+    _randomMnemonic = xchain.generateMnemonic();
     _randomMnemonicList = _randomMnemonic.split(" ");
 
     setState(() {
@@ -59,10 +59,8 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
   _encryptToKeyStore() async {
     final StorageService _storageService = StorageService();
     String _key = UniqueKey().toString();
-    print(_key);
 
-    final SecureItem _newSecureItem = SecureItem(_key, _randomMnemonic);
-    _storageService.writeSecureData(_newSecureItem);
+    _storageService.writeSecureData(SecureItem(_key, _randomMnemonic));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }
@@ -344,10 +342,11 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
                       child: const Text(
                         'Copy to clipboard',
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: kYellowColor,
-                            decoration: TextDecoration.underline),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: kYellowColor,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ],
@@ -406,6 +405,7 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16.0),
               ],
             ),
           ),
