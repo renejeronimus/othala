@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:othala/models/secure_item.dart';
 import 'package:othala/screens/wallet_settings_screen.dart';
@@ -19,7 +17,6 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     print('got: ${widget.secureItem.key}');
   }

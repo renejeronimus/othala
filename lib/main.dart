@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:othala/screens/wallet_creation_screen.dart';
+import 'package:othala/screens/wallet_import_screen.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/loading_screen.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/home_screen': (context) => const HomeScreen(),
         '/loading_screen': (context) => const LoadingScreen(),
         '/wallet_creation_screen': (context) => const WalletCreationScreen(),
+        '/wallet_import_screen': (context) => const WalletImportScreen(),
       },
     );
   }

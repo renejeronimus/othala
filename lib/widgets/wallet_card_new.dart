@@ -36,7 +36,7 @@ class _WalletCardNewState extends State<WalletCardNew> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/wallet_creation_screen');
+                      Navigator.pushNamed(context, '/wallet_import_screen');
                     },
                     child: const CustomFlatButton(
                       textLabel: 'Import',

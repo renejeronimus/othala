@@ -1,11 +1,12 @@
-import 'package:bip39/bip39.dart' as bip39;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:xchain_dart/xchaindart.dart' as xchain;
 
+import '../models/secure_item.dart';
+import '../services/secure_storage.dart';
 import '../themes/theme_data.dart';
-import '../widgets/flat_rounded_button.dart';
+import '../widgets/flat_button.dart';
 
 class WalletImportScreen extends StatefulWidget {
   const WalletImportScreen({Key? key}) : super(key: key);
@@ -15,20 +16,17 @@ class WalletImportScreen extends StatefulWidget {
 }
 
 class _WalletImportScreenState extends State<WalletImportScreen> {
-  bool _validated = false;
+  bool _confirmed = false;
   String _mnemonic = '';
 
-  final _storage = const FlutterSecureStorage();
   final _myTextController = TextEditingController();
 
   _encryptToKeyStore() async {
-    const String key = 'Mnemonic phrase';
-    final String value = _mnemonic;
+    final StorageService _storageService = StorageService();
+    String _key = UniqueKey().toString();
 
-    await _storage.write(
-      key: key,
-      value: value,
-    );
+    _storageService.writeSecureData(SecureItem(_key, _mnemonic));
+
     Navigator.pushReplacementNamed(context, '/home_screen');
   }
 
@@ -41,14 +39,14 @@ class _WalletImportScreenState extends State<WalletImportScreen> {
   void _validateMnemonic() {
     if (_myTextController.text.isNotEmpty) {
       _mnemonic = _myTextController.text;
-      if (bip39.validateMnemonic(_mnemonic) == true) {
+      if (xchain.validateMnemonic(_mnemonic) == true) {
         setState(() {
-          _validated = true;
+          _confirmed = true;
         });
       }
-      if (bip39.validateMnemonic(_mnemonic) == false) {
+      if (xchain.validateMnemonic(_mnemonic) == false) {
         setState(() {
-          _validated = false;
+          _confirmed = false;
         });
       }
     }
@@ -71,15 +69,6 @@ class _WalletImportScreenState extends State<WalletImportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Restore'),
-        backgroundColor: kBlackColor,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-        leading: IconButton(
-            icon: const Icon(CupertinoIcons.chevron_back),
-            onPressed: () => Navigator.pop(context)),
-      ),
       body: Container(
         color: kBlackColor,
         child: SafeArea(
@@ -88,9 +77,17 @@ class _WalletImportScreenState extends State<WalletImportScreen> {
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
             child: Column(
               children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: SvgPicture.asset(
+                    'assets/icons/logo.svg',
+                    color: kYellowColor,
+                    height: 40.0,
+                  ),
+                ),
                 const Text(
                   'Enter your 12-word recovery phrase to import your wallets.',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 24.0),
                 Container(
@@ -116,30 +113,48 @@ class _WalletImportScreenState extends State<WalletImportScreen> {
                         child: const Text(
                           'Paste from clipboard',
                           style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: kWhiteColor,
-                              decoration: TextDecoration.underline),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: kYellowColor,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
                 const Spacer(),
-                const SizedBox(height: 16.0),
-                GestureDetector(
-                  onTap: () => _validated == true ? _encryptToKeyStore() : null,
-                  child: _validated == true
-                      ? const FlatRoundedButton(
-                          buttonColor: kWhiteColor,
-                          textLabel: 'import',
-                        )
-                      : const FlatRoundedButton(
-                          buttonColor: kWhiteColor,
-                          textLabel: 'import',
-                          enabled: false,
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () =>
+                            _confirmed == true ? _encryptToKeyStore() : null,
+                        child: _confirmed == true
+                            ? const CustomFlatButton(
+                                textLabel: 'Import',
+                              )
+                            : const CustomFlatButton(
+                                textLabel: 'Import',
+                                enabled: false,
+                              ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: const CustomFlatButton(
+                          textLabel: 'Cancel',
+                          buttonColor: kDarkBackgroundColor,
+                          fontColor: kWhiteColor,
                         ),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 16.0),
               ],
             ),
           ),
