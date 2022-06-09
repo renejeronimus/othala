@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:othala/models/secure_item.dart';
-import 'package:othala/screens/wallet_settings_screen.dart';
 
+import '../models/secure_item.dart';
+import '../models/unsplash_image.dart';
+import '../screens/wallet_settings_screen.dart';
+import '../services/unsplash_image_provider.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
@@ -15,10 +17,30 @@ class WalletScreen extends StatefulWidget {
 }
 
 class _WalletScreenState extends State<WalletScreen> {
+  /// Stores the current page index for the api requests.
+  int page = 0, totalPages = -1;
+
+  /// Stores the currently loaded loaded images.
+  List<UnsplashImage> images = [];
+
+  /// States whether there is currently a task running loading images.
+  bool loadingImages = false;
+
+  /// Stored the currently searched keyword.
+  late String keyword;
+
   @override
   void initState() {
     super.initState();
-    print('got: ${widget.secureItem.key}');
+    _loadRandomImage(keyword: 'nature');
+  }
+
+  /// Requests a [UnsplashImage] for a given [keyword] query.
+  /// If the given [keyword] is null, any random image is loaded.
+  _loadRandomImage({String? keyword}) async {
+    UnsplashImage res =
+        await UnsplashImageProvider.loadRandomImage(keyword: keyword);
+    print(res.getRegularUrl());
   }
 
   @override

@@ -18,6 +18,7 @@ dependencies:
 
   # Utility plugins
   http: ^0.13.4
+  date_format: ^2.0.6
 
   # Bitcoin plugins
   xchain_dart:
