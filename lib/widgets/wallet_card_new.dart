@@ -18,11 +18,11 @@ class _WalletCardNewState extends State<WalletCardNew> {
       body: SafeArea(
         child: Column(
           children: [
-            Image.asset(
-              'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
-              fit: BoxFit.cover,
-              height: 600.0,
-              width: MediaQuery.of(context).size.width,
+            Expanded(
+              child: Image.asset(
+                'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
+                fit: BoxFit.cover,
+              ),
             ),
             Row(
               children: [

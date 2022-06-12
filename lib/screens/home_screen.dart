@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    print('initState');
     getWallets();
   }
 
@@ -35,20 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: SvgPicture.asset(
-                'assets/icons/logo.svg',
-                color: kYellowColor,
-                height: 40.0,
-              ),
+            SvgPicture.asset(
+              'assets/icons/logo.svg',
+              color: kYellowColor,
+              height: 40.0,
             ),
             Expanded(
               child: _buildPageView(),
             ),
+            const SizedBox(height: 16.0),
             _buildCircleIndicator(),
           ],
         ),

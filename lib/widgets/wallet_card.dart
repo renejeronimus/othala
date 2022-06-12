@@ -25,23 +25,23 @@ class _WalletCardState extends State<WalletCard> {
       body: SafeArea(
         child: Column(
           children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        WalletScreen(secureItem: widget.secureItem),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) =>
+                          WalletScreen(secureItem: widget.secureItem),
+                    ),
+                  );
+                },
+                child: Hero(
+                  tag: 'imageHero',
+                  child: Image.asset(
+                    'assets/images/david-marcu-78A265wPiO4-unsplash.jpeg',
+                    fit: BoxFit.cover,
                   ),
-                );
-              },
-              child: Hero(
-                tag: 'imageHero',
-                child: Image.asset(
-                  'assets/images/david-marcu-78A265wPiO4-unsplash.jpeg',
-                  fit: BoxFit.cover,
-                  height: MediaQuery.of(context).size.height - 300,
-                  width: MediaQuery.of(context).size.width,
                 ),
               ),
             ),
