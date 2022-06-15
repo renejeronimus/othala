@@ -1,16 +1,17 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-import '../models/secure_item.dart';
+import 'package:flutter/material.dart';
+import 'package:othala/screens/wallet_settings_screen.dart';
+
 import '../models/unsplash_image.dart';
-import '../screens/wallet_settings_screen.dart';
-import '../services/unsplash_image_provider.dart';
+import '../models/wallet.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
 class WalletScreen extends StatefulWidget {
-  WalletScreen({Key? key, required this.secureItem}) : super(key: key);
+  const WalletScreen(this.wallet, {Key? key}) : super(key: key);
 
-  final SecureItem secureItem;
+  final Wallet wallet;
 
   @override
   _WalletScreenState createState() => _WalletScreenState();
@@ -30,20 +31,6 @@ class _WalletScreenState extends State<WalletScreen> {
   late String keyword;
 
   @override
-  void initState() {
-    super.initState();
-    _loadRandomImage(keyword: 'nature');
-  }
-
-  /// Requests a [UnsplashImage] for a given [keyword] query.
-  /// If the given [keyword] is null, any random image is loaded.
-  _loadRandomImage({String? keyword}) async {
-    UnsplashImage res =
-        await UnsplashImageProvider.loadRandomImage(keyword: keyword);
-    print(res.getRegularUrl());
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -60,8 +47,8 @@ class _WalletScreenState extends State<WalletScreen> {
                       tag: 'imageHero',
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
-                        child: Image.asset(
-                          'assets/images/david-marcu-78A265wPiO4-unsplash.jpeg',
+                        child: Image.file(
+                          File(widget.wallet.imagePath),
                           fit: BoxFit.cover,
                           color: Colors.white.withOpacity(0.8),
                           colorBlendMode: BlendMode.modulate,
@@ -79,8 +66,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) =>
-                                  WalletSettingsScreen(
-                                      secureItem: widget.secureItem),
+                                  WalletSettingsScreen(widget.wallet),
                             ),
                           );
                         },

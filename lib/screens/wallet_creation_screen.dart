@@ -1,13 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:http/http.dart' as http;
 import 'package:othala/models/secure_item.dart';
-import 'package:xchain_dart/xchaindart.dart' as xchain;
+import 'package:othala/models/wallet.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:xchain_dart/xchaindart.dart';
 
+import '../models/unsplash_image.dart';
 import '../services/secure_storage.dart';
+import '../services/unsplash_image_provider.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
@@ -22,6 +30,11 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
   // Random mnemonic phrase
   bool _confirmed = false;
   String _randomMnemonic = '';
+
+  // Default background image
+  String _localPath =
+      'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg';
+
   List<String> _randomMnemonicList = [
     '',
     '',
@@ -45,22 +58,21 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
 
   String? _createMnemonic() {
     // BIP39 English word list
-    _randomMnemonic = xchain.generateMnemonic();
+    _randomMnemonic = generateMnemonic();
     _randomMnemonicList = _randomMnemonic.split(" ");
 
-    setState(() {
-      if (kDebugMode) {
-        print(_randomMnemonicList);
-      }
-    });
-    return null;
+    setState(() {});
   }
 
   _encryptToKeyStore() async {
-    final StorageService _storageService = StorageService();
     String _key = UniqueKey().toString();
 
+    final StorageService _storageService = StorageService();
     _storageService.writeSecureData(SecureItem(_key, _randomMnemonic));
+
+    XChainClient _client = BitcoinClient(_randomMnemonic);
+    final Box _walletBox = Hive.box('walletBox');
+    _walletBox.add(Wallet(_key, '', [_client.address], [], _localPath));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }
@@ -86,10 +98,35 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
     );
   }
 
+  /// Requests a [UnsplashImage] for a given [keyword] query.
+  /// If the given [keyword] is null, any random image is loaded.
+  _loadRandomImage({String? keyword}) async {
+    UnsplashImage res =
+        await UnsplashImageProvider.loadRandomImage(keyword: keyword);
+    _download(res.getRegularUrl());
+  }
+
+  Future<void> _download(String url) async {
+    final response = await http.get(Uri.parse(url));
+
+    // Get the image name
+    final imageName = path.basename(url);
+
+    // Get the document directory path
+    final appDir = await pathProvider.getApplicationDocumentsDirectory();
+    // This is the saved image path
+    _localPath = path.join(appDir.path, imageName);
+
+    // Downloading
+    final imageFile = File(_localPath);
+    await imageFile.writeAsBytes(response.bodyBytes);
+  }
+
   @override
   void initState() {
     super.initState();
     _createMnemonic();
+    _loadRandomImage(keyword: 'nature');
   }
 
   @override

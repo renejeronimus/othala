@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/secure_item.dart';
 
 class StorageService {
-  final _secureStorage = const FlutterSecureStorage();
+  final _secureStorage = new FlutterSecureStorage();
 
   Future<void> writeSecureData(SecureItem newItem) async {
     await _secureStorage.write(
@@ -11,13 +11,13 @@ class StorageService {
   }
 
   Future<String?> readSecureData(String key) async {
-    var readData =
+    String? readData =
         await _secureStorage.read(key: key, aOptions: _getAndroidOptions());
     return readData;
   }
 
-  Future<void> deleteSecureData(SecureItem item) async {
-    await _secureStorage.delete(key: item.key, aOptions: _getAndroidOptions());
+  Future<void> deleteSecureData(String key) async {
+    await _secureStorage.delete(key: key, aOptions: _getAndroidOptions());
   }
 
   Future<bool> containsKeyInSecureData(String key) async {

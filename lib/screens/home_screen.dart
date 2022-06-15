@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 import 'package:othala/widgets/wallet_card_new.dart';
 import 'package:page_view_indicators/circle_page_indicator.dart';
 
-import '../models/secure_item.dart';
-import '../services/secure_storage.dart';
+import '../models/wallet.dart';
 import '../themes/theme_data.dart';
 import '../widgets/wallet_card.dart';
 
@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final _currentPageNotifier = ValueNotifier<int>(0);
   final Color _selectedDotColor = kYellowColor;
   final Color _dotColor = kWhiteColor;
-  final StorageService _storageService = StorageService();
 
   final List _pages = [];
 
@@ -91,18 +90,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getWallets() async {
-    // Read all values
-    List<SecureItem> _allValues = await _storageService.readAllSecureData();
-    print(_allValues.length);
-
-    for (SecureItem _secureItem in _allValues) {
-      print(_secureItem.key);
-      _pages.insert(0, WalletCard(_secureItem));
+    Box _walletBox = Hive.box('walletBox');
+    for (var index = 0; index < _walletBox.length; index++) {
+      Wallet _wallet = _walletBox.getAt(index);
+      _pages.insert(0, WalletCard(_wallet));
     }
     _pages.add(const WalletCardNew());
-
     setState(() {});
-
-    // await _storageService.deleteAllSecureData();
   }
 }

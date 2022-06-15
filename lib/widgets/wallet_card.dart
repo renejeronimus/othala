@@ -1,23 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:othala/models/secure_item.dart';
 import 'package:othala/screens/wallet_screen.dart';
 
-import '../services/secure_storage.dart';
+import '../models/wallet.dart';
 import '../themes/theme_data.dart';
 import 'flat_button.dart';
 
 class WalletCard extends StatefulWidget {
-  WalletCard(this.secureItem, {Key? key}) : super(key: key);
+  final Wallet wallet;
 
-  final SecureItem secureItem;
+  const WalletCard(this.wallet, {Key? key}) : super(key: key);
 
   @override
   State<WalletCard> createState() => _WalletCardState();
 }
 
 class _WalletCardState extends State<WalletCard> {
-  final StorageService _storageService = StorageService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,14 +31,14 @@ class _WalletCardState extends State<WalletCard> {
                     context,
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) =>
-                          WalletScreen(secureItem: widget.secureItem),
+                          WalletScreen(widget.wallet),
                     ),
                   );
                 },
                 child: Hero(
                   tag: 'imageHero',
-                  child: Image.asset(
-                    'assets/images/david-marcu-78A265wPiO4-unsplash.jpeg',
+                  child: Image.file(
+                    File(widget.wallet.imagePath),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -50,16 +49,13 @@ class _WalletCardState extends State<WalletCard> {
                 Expanded(
                     child: GestureDetector(
                         onTap: () {
-                          print(widget.secureItem.key);
+                          print(widget.wallet.address);
                         },
                         child: const CustomFlatButton(textLabel: 'Send'))),
                 Expanded(
                     child: GestureDetector(
                   onTap: () {
-                    _storageService.deleteSecureData(widget.secureItem);
-                    setState(() {
-                      print('deleting: ${widget.secureItem.key}');
-                    });
+                    print(widget.wallet.address);
                   },
                   child: const CustomFlatButton(
                     textLabel: 'Receive',

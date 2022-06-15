@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 
-import '../models/secure_item.dart';
+import '../models/wallet.dart';
 import '../services/secure_storage.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 import 'home_screen.dart';
 
 class WalletSettingsScreen extends StatefulWidget {
-  const WalletSettingsScreen({Key? key, required this.secureItem})
-      : super(key: key);
+  const WalletSettingsScreen(this.wallet, {Key? key}) : super(key: key);
 
-  final SecureItem secureItem;
+  final Wallet wallet;
 
   @override
   _WalletSettingsScreenState createState() => _WalletSettingsScreenState();
@@ -129,10 +129,20 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
     );
   }
 
-  void _deleteWallet() {
-    final StorageService _storageService = StorageService();
-    _storageService.deleteSecureData(widget.secureItem);
-    setState(() {});
+  Future<void> _deleteWallet() async {
+    // Delete wallet from Secure storage.
+    StorageService _storageService = StorageService();
+    _storageService.deleteSecureData(widget.wallet.key);
+
+    // Delete wallet from Hive box.
+    Box _walletBox = Hive.box('walletBox');
+    for (var index = 0; index < _walletBox.length; index++) {
+      Wallet _wallet = _walletBox.getAt(index);
+      if (_wallet.key == widget.wallet.key) {
+        _walletBox.deleteAt(index);
+        break;
+      }
+    }
 
     Navigator.pushReplacement(
       context,

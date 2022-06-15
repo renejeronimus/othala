@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:othala/screens/wallet_creation_screen.dart';
 import 'package:othala/screens/wallet_import_screen.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/loading_screen.dart';
+import 'models/wallet.dart';
 
-void main() {
+Future<void> main() async {
+  Hive.registerAdapter(WalletAdapter());
+  await Hive.initFlutter();
+  await Hive.openBox('walletBox');
   runApp(const MyApp());
 }
 
