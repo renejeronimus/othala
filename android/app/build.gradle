@@ -42,11 +42,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "wallet.app.othala"
         minSdkVersion flutter.minSdkVersion
         // flutter_launcher_icons: ^0.9.2 plugin requires hardcoded number.
-        // minSdkVersion 21
+        // flutter_secure_storage: ^5.0.2 plugin requires minSdkVersion >= 18.
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

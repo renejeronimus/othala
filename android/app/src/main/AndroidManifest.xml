@@ -3,7 +3,8 @@
    <application
         android:label="othala"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+       android:allowBackup="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

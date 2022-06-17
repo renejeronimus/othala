@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:othala/screens/wallet_screen.dart';
 
 import '../models/wallet.dart';
+import '../screens/receive_payment_screen.dart';
 import '../themes/theme_data.dart';
 import 'flat_button.dart';
 
@@ -56,6 +57,13 @@ class _WalletCardState extends State<WalletCard> {
                     child: GestureDetector(
                   onTap: () {
                     print(widget.wallet.address);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            ReceivePaymentScreen(widget.wallet),
+                      ),
+                    );
                   },
                   child: const CustomFlatButton(
                     textLabel: 'Receive',
