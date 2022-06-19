@@ -30,6 +30,29 @@ class _WalletScreenState extends State<WalletScreen> {
   /// Stored the currently searched keyword.
   late String keyword;
 
+  showImage() {
+    if (FileSystemEntity.typeSync(widget.wallet.imagePath) ==
+        FileSystemEntityType.notFound) {
+      return Image.asset(
+        'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
+        fit: BoxFit.cover,
+        color: Colors.white.withOpacity(0.8),
+        colorBlendMode: BlendMode.modulate,
+        height: 160,
+        width: MediaQuery.of(context).size.width,
+      );
+    } else {
+      return Image.file(
+        File(widget.wallet.imagePath),
+        fit: BoxFit.cover,
+        color: Colors.white.withOpacity(0.8),
+        colorBlendMode: BlendMode.modulate,
+        height: 160,
+        width: MediaQuery.of(context).size.width,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,14 +70,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       tag: 'imageHero',
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16.0),
-                        child: Image.file(
-                          File(widget.wallet.imagePath),
-                          fit: BoxFit.cover,
-                          color: Colors.white.withOpacity(0.8),
-                          colorBlendMode: BlendMode.modulate,
-                          height: 160,
-                          width: MediaQuery.of(context).size.width,
-                        ),
+                        child: showImage(),
                       ),
                     ),
                     Positioned(

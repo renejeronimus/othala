@@ -18,6 +18,21 @@ class WalletCard extends StatefulWidget {
 }
 
 class _WalletCardState extends State<WalletCard> {
+  showImage() {
+    if (FileSystemEntity.typeSync(widget.wallet.imagePath) ==
+        FileSystemEntityType.notFound) {
+      return Image.asset(
+        'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.file(
+        File(widget.wallet.imagePath),
+        fit: BoxFit.cover,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,10 +53,7 @@ class _WalletCardState extends State<WalletCard> {
                 },
                 child: Hero(
                   tag: 'imageHero',
-                  child: Image.file(
-                    File(widget.wallet.imagePath),
-                    fit: BoxFit.cover,
-                  ),
+                  child: showImage(),
                 ),
               ),
             ),
