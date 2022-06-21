@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:othala/screens/wallet_settings_screen.dart';
@@ -9,9 +10,11 @@ import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
 class WalletScreen extends StatefulWidget {
-  const WalletScreen(this.wallet, {Key? key}) : super(key: key);
+  const WalletScreen(this.wallet, this.walletIndex, {Key? key})
+      : super(key: key);
 
   final Wallet wallet;
+  final int walletIndex;
 
   @override
   _WalletScreenState createState() => _WalletScreenState();
@@ -29,6 +32,8 @@ class _WalletScreenState extends State<WalletScreen> {
 
   /// Stored the currently searched keyword.
   late String keyword;
+
+  num _balance = 0;
 
   showImage() {
     if (FileSystemEntity.typeSync(widget.wallet.imagePath) ==
@@ -50,6 +55,14 @@ class _WalletScreenState extends State<WalletScreen> {
         height: 160,
         width: MediaQuery.of(context).size.width,
       );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.wallet.balance.isNotEmpty) {
+      _balance = widget.wallet.balance.first;
     }
   }
 
@@ -82,7 +95,8 @@ class _WalletScreenState extends State<WalletScreen> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) =>
-                                  WalletSettingsScreen(widget.wallet),
+                                  WalletSettingsScreen(
+                                      widget.wallet, widget.walletIndex),
                             ),
                           );
                         },
@@ -90,25 +104,28 @@ class _WalletScreenState extends State<WalletScreen> {
                       ),
                     ),
                     Positioned(
-                      top: 20.0,
-                      child: Column(
-                        children: const [
+                      top: 40.0,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
                           Text(
-                            'Wallet name',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.w600),
+                            _balance.toString(),
+                            style: const TextStyle(
+                              color: kWhiteColor,
+                              fontSize: 32.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          SizedBox(height: 16.0),
-                          Text(
-                            '1.23456 BTC',
+                          const SizedBox(width: 8.0),
+                          const Text(
+                            'btc',
                             style: TextStyle(
-                                fontSize: 32.0, fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(height: 16.0),
-                          Text(
-                            '€23.032,12',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                              color: kWhiteColor,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),

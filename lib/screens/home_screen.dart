@@ -72,9 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Ignore CirclePageIndicator when fewer than 2 screens.
     if (_pages.length > 1) {
       return Center(
-        // left: 0.0,
-        // right: 0.0,
-        // bottom: 24.0,
         child: CirclePageIndicator(
           size: 8.0,
           selectedSize: 12.0,
@@ -92,8 +89,11 @@ class _HomeScreenState extends State<HomeScreen> {
   getWallets() async {
     Box _walletBox = Hive.box('walletBox');
     for (var index = 0; index < _walletBox.length; index++) {
+      // print('wallet index: $index');
       Wallet _wallet = _walletBox.getAt(index);
-      _pages.insert(0, WalletCard(_wallet));
+      // print('walletKey: ${_wallet.key}');
+      // print('walletAddress: ${_wallet.address}');
+      _pages.insert(0, WalletCard(_wallet, index));
     }
     _pages.add(const WalletCardNew());
     setState(() {});

@@ -10,9 +10,11 @@ import '../widgets/flat_button.dart';
 import 'home_screen.dart';
 
 class WalletSettingsScreen extends StatefulWidget {
-  const WalletSettingsScreen(this.wallet, {Key? key}) : super(key: key);
+  const WalletSettingsScreen(this.wallet, this.walletIndex, {Key? key})
+      : super(key: key);
 
   final Wallet wallet;
+  final int walletIndex;
 
   @override
   _WalletSettingsScreenState createState() => _WalletSettingsScreenState();
@@ -136,13 +138,7 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
 
     // Delete wallet from Hive box.
     Box _walletBox = Hive.box('walletBox');
-    for (var index = 0; index < _walletBox.length; index++) {
-      Wallet _wallet = _walletBox.getAt(index);
-      if (_wallet.key == widget.wallet.key) {
-        _walletBox.deleteAt(index);
-        break;
-      }
-    }
+    _walletBox.deleteAt(widget.walletIndex);
 
     Navigator.pushReplacement(
       context,

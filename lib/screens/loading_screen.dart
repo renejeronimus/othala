@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:othala/services/wallet_manager.dart';
 
 import '../themes/theme_data.dart';
 import 'home_screen.dart';
@@ -14,13 +15,16 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  final WalletManager _manager = WalletManager();
+
   @override
   initState() {
     super.initState();
+    // check for wallet balance updates
+    _manager.updateBalances();
 
     // placeholder for verifying data.
     Timer(const Duration(seconds: 2), () {
-      // Navigator.pushReplacementNamed(context, '/home_screen');
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(

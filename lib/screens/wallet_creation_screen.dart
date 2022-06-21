@@ -71,7 +71,7 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
     _storageService.writeSecureData(SecureItem(_key, _randomMnemonic));
 
     XChainClient _client = BitcoinClient(_randomMnemonic);
-    final Box _walletBox = Hive.box('walletBox');
+    var _walletBox = Hive.box('walletBox');
     _walletBox.add(Wallet(_key, '', [_client.address], [], _localPath));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
