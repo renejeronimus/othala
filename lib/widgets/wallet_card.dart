@@ -97,7 +97,7 @@ class _WalletCardState extends State<WalletCard> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(width: 8.0),
+                          const SizedBox(width: 8.0),
                           const Text(
                             'btc',
                             style: TextStyle(
@@ -115,16 +115,16 @@ class _WalletCardState extends State<WalletCard> {
             ),
             Row(
               children: [
-                Expanded(
-                    child: GestureDetector(
-                        onTap: () {
-                          print(widget.wallet.address);
-                        },
-                        child: const CustomFlatButton(textLabel: 'Send'))),
+                Visibility(
+                  visible: widget.wallet.type == 'address' ? false : true,
+                  child: Expanded(
+                      child: GestureDetector(
+                          onTap: () {},
+                          child: const CustomFlatButton(textLabel: 'Send'))),
+                ),
                 Expanded(
                     child: GestureDetector(
                   onTap: () {
-                    print(widget.wallet.address);
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(

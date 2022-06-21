@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../themes/theme_data.dart';
+
 class ListDivider extends StatelessWidget {
   final double height;
 
@@ -18,9 +20,8 @@ class ListDivider extends StatelessWidget {
             return SizedBox(
               width: dashWidth,
               height: dashHeight,
-              child: DecoratedBox(
-                decoration:
-                    BoxDecoration(color: Theme.of(context).dividerColor),
+              child: const DecoratedBox(
+                decoration: BoxDecoration(color: kDarkNeutral4Color),
               ),
             );
           }),

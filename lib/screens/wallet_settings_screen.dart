@@ -7,6 +7,7 @@ import '../models/wallet.dart';
 import '../services/secure_storage.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
+import '../widgets/list_item.dart';
 import 'home_screen.dart';
 
 class WalletSettingsScreen extends StatefulWidget {
@@ -173,22 +174,10 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                   onTap: () {
                     _showDialog();
                   },
-                  child: const ListTile(
-                    title: Text(
-                      'Delete wallet',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Warning: may cause loss of funds',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: kRedColor,
-                      ),
-                    ),
+                  child: ListItem(
+                    'Delete wallet',
+                    subtitle: 'Warning: may cause loss of funds',
+                    subtitleColor: kRedColor,
                   ),
                 ),
                 const Spacer(),

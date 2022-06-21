@@ -19,25 +19,28 @@ class WalletAdapter extends TypeAdapter<Wallet> {
     return Wallet(
       fields[0] as String,
       fields[1] as String,
-      (fields[2] as List).cast<String>(),
-      (fields[3] as List).cast<num>(),
-      fields[4] as String,
+      fields[2] as String,
+      (fields[3] as List).cast<String>(),
+      (fields[4] as List).cast<num>(),
+      fields[5] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Wallet obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.key)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.address)
+      ..write(obj.type)
       ..writeByte(3)
-      ..write(obj.balance)
+      ..write(obj.address)
       ..writeByte(4)
+      ..write(obj.balance)
+      ..writeByte(5)
       ..write(obj.imagePath);
   }
 

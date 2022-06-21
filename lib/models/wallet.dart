@@ -9,19 +9,18 @@ class Wallet {
   @HiveField(1)
   String name;
   @HiveField(2)
-  List<String> address;
+  String type;
   @HiveField(3)
-  List<num> balance;
+  List<String> address;
   @HiveField(4)
+  List<num> balance;
+  @HiveField(5)
   String imagePath;
-  // @HiveField(3)
-  // List<Address> address;
-  // @HiveField(4)
-  // List<Image> image;
 
   Wallet(
     this.key,
     this.name,
+    this.type,
     this.address,
     this.balance,
     this.imagePath,

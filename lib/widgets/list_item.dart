@@ -9,12 +9,14 @@ class ListItem extends StatelessWidget {
       {Key? key,
       this.value = '',
       this.subtitle = '',
+      this.subtitleColor = kDarkNeutral7Color,
       this.chevron = false,
       this.icon})
       : super(key: key);
 
   final String title;
   String subtitle;
+  Color subtitleColor;
   String value;
   bool chevron;
   IconData? icon;
@@ -57,16 +59,17 @@ class ListItem extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               subtitle != ''
                   ? Text(
                       getSubString(subtitle),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
+                        color: subtitleColor,
                       ),
                     )
                   : Container(),
