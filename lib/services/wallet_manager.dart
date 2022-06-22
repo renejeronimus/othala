@@ -4,8 +4,10 @@ import 'package:xchain_dart/xchaindart.dart';
 import '../models/wallet.dart';
 
 class WalletManager {
-  Future<void> updateBalances() async {
-    Box _walletBox = Hive.box('walletBox');
+  final Box _walletBox = Hive.box('walletBox');
+
+  /// Update all wallet balances.
+  Future<void> updateAllBalances() async {
     for (var index = 0; index < _walletBox.length; index++) {
       Wallet _wallet = _walletBox.getAt(index);
       XChainClient _client = BitcoinClient.readonly(_wallet.address[0]);
@@ -13,5 +15,14 @@ class WalletManager {
       _wallet.balance = [_balances[0]['amount']];
       _walletBox.putAt(index, _wallet);
     }
+  }
+
+  /// Update a single wallet balance.
+  Future<void> updateBalance(index) async {
+    Wallet _wallet = _walletBox.getAt(index);
+    XChainClient _client = BitcoinClient.readonly(_wallet.address[0]);
+    List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
+    _wallet.balance = [_balances[0]['amount']];
+    _walletBox.putAt(index, _wallet);
   }
 }

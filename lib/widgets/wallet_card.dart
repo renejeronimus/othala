@@ -5,6 +5,7 @@ import 'package:othala/screens/wallet_screen.dart';
 
 import '../models/wallet.dart';
 import '../screens/receive_payment_screen.dart';
+import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
 import 'flat_button.dart';
 
@@ -36,12 +37,19 @@ class _WalletCardState extends State<WalletCard> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _refresh(int index) async {
+    final WalletManager _walletManager = WalletManager();
+    await _walletManager.updateBalance(index);
     for (num sats in widget.wallet.balance) {
       _balance = _balance + sats;
     }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh(widget.walletIndex);
   }
 
   @override

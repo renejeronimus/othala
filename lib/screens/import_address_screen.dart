@@ -41,9 +41,13 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
     _storageService.writeSecureData(SecureItem(_key, _textInput));
 
     XChainClient _client = BitcoinClient.readonly(_textInput);
+
+    List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
+    num _balance = _balances[0]['amount'];
+
     var _walletBox = Hive.box('walletBox');
-    _walletBox
-        .add(Wallet(_key, '', 'address', [_client.address], [], _localPath));
+    _walletBox.add(
+        Wallet(_key, '', 'address', [_client.address], [_balance], _localPath));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }

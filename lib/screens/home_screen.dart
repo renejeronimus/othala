@@ -16,18 +16,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getWallets();
-  }
-
   final PageController _controller = PageController(initialPage: 0);
   final _currentPageNotifier = ValueNotifier<int>(0);
   final Color _selectedDotColor = kYellowColor;
   final Color _dotColor = kWhiteColor;
 
   final List _pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getWallets();
+  }
 
   @override
   Widget build(BuildContext context) {
