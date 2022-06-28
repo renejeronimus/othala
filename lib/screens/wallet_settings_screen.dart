@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:bitcoin_dart/bitcoin_flutter.dart' as bitcoinClient;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
+import 'package:xchain_dart/xchaindart.dart';
 
 import '../models/wallet.dart';
 import '../services/secure_storage.dart';
@@ -22,6 +23,8 @@ class WalletSettingsScreen extends StatefulWidget {
 }
 
 class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
+  final Box _walletBox = Hive.box('walletBox');
+
   void _showDialog() {
     showDialog(
       barrierDismissible: true,
@@ -138,7 +141,6 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
     _storageService.deleteSecureData(widget.wallet.key);
 
     // Delete wallet from Hive box.
-    Box _walletBox = Hive.box('walletBox');
     _walletBox.deleteAt(widget.walletIndex);
 
     Navigator.pushReplacement(
@@ -150,6 +152,26 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
       ),
     );
     setState(() {});
+  }
+
+  Future<void> _changeNetwork() async {
+    String networkType = widget.wallet.network;
+    StorageService _storageService = StorageService();
+    String? _seed = await _storageService.readSecureData(widget.wallet.key);
+    XChainClient _client = BitcoinClient(_seed!);
+    if (networkType == 'bitcoin') {
+      widget.wallet.network = 'testnet';
+      _client.setNetwork(bitcoinClient.testnet);
+    } else {
+      widget.wallet.network = 'bitcoin';
+      _client.setNetwork(bitcoinClient.bitcoin);
+    }
+    widget.wallet.address = [_client.getAddress(0)];
+    _walletBox.putAt(widget.walletIndex, widget.wallet);
+
+    setState(() {
+      _client.purgeClient();
+    });
   }
 
   @override
@@ -178,6 +200,18 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                     'Delete wallet',
                     subtitle: 'Warning: may cause loss of funds',
                     subtitleColor: kRedColor,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _changeNetwork();
+                  },
+                  child: Visibility(
+                    visible: widget.wallet.type == 'phrase' ? true : false,
+                    child: ListItem(
+                      'Toggle nework',
+                      subtitle: 'Selected network: ${widget.wallet.network}',
+                    ),
                   ),
                 ),
                 const Spacer(),

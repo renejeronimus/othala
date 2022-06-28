@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bitcoin_dart/bitcoin_flutter.dart' as bitcoinClient;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,6 +28,7 @@ class ImportAddressScreen extends StatefulWidget {
 class _ImportAddressScreenState extends State<ImportAddressScreen> {
   bool _confirmed = false;
   String _textInput = '';
+  String _network = 'bitcoin';
 
   final _myTextController = TextEditingController();
 
@@ -41,13 +43,16 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
     _storageService.writeSecureData(SecureItem(_key, _textInput));
 
     XChainClient _client = BitcoinClient.readonly(_textInput);
+    if (_network == 'testnet') {
+      _client.setNetwork(bitcoinClient.testnet);
+    }
 
     List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
     num _balance = _balances[0]['amount'];
 
     var _walletBox = Hive.box('walletBox');
-    _walletBox.add(
-        Wallet(_key, '', 'address', [_client.address], [_balance], _localPath));
+    _walletBox.add(Wallet(_key, '', 'address', _network, [_client.address],
+        [_balance], _localPath));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }
@@ -63,15 +68,18 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
       _textInput = _myTextController.text;
       XChainClient _client = BitcoinClient.readonly(_textInput);
       if (_client.validateAddress(_textInput) == true) {
-        setState(() {
+        _confirmed = true;
+      } else {
+        // try validating on testnet.
+        _client.setNetwork(bitcoinClient.testnet);
+        if (_client.validateAddress(_textInput) == true) {
           _confirmed = true;
-        });
-      }
-      if (_client.validateAddress(_textInput) == false) {
-        setState(() {
+          _network = 'testnet';
+        } else {
           _confirmed = false;
-        });
+        }
       }
+      setState(() {});
     }
   }
 

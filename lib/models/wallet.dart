@@ -11,16 +11,19 @@ class Wallet {
   @HiveField(2)
   String type;
   @HiveField(3)
-  List<String> address;
+  String network;
   @HiveField(4)
-  List<num> balance;
+  List<String> address;
   @HiveField(5)
+  List<num> balance;
+  @HiveField(6)
   String imagePath;
 
   Wallet(
     this.key,
     this.name,
     this.type,
+    this.network,
     this.address,
     this.balance,
     this.imagePath,

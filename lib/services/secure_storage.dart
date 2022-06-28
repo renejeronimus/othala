@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/secure_item.dart';
 
 class StorageService {
-  final _secureStorage = new FlutterSecureStorage();
+  final _secureStorage = const FlutterSecureStorage();
 
   Future<void> writeSecureData(SecureItem newItem) async {
     await _secureStorage.write(

@@ -25,7 +25,7 @@ class ListItem extends StatelessWidget {
     String subtitleShort = fullString;
     int _length = fullString.length;
     int _nearEnd = _length - 6;
-    if (_length > 32) {
+    if (_length > 40) {
       String _sub1 = fullString.substring(0, 24);
       String _sub2 = fullString.substring(_nearEnd, _length);
       subtitleShort = _sub1 + '...' + _sub2;
