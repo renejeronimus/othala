@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:othala/models/transaction.dart';
 
 part 'wallet.g.dart';
 
@@ -18,6 +19,8 @@ class Wallet {
   List<num> balance;
   @HiveField(6)
   String imagePath;
+  @HiveField(7)
+  List<Transaction> transactions;
 
   Wallet(
     this.key,
@@ -27,5 +30,6 @@ class Wallet {
     this.address,
     this.balance,
     this.imagePath,
+    this.transactions,
   );
 }

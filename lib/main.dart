@@ -9,10 +9,12 @@ import 'package:othala/screens/wallet_import_screen.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/loading_screen.dart';
+import 'models/transaction.dart';
 import 'models/wallet.dart';
 
 Future<void> main() async {
   Hive.registerAdapter(WalletAdapter());
+  Hive.registerAdapter(TransactionAdapter());
   await Hive.initFlutter();
   await Hive.openBox('walletBox');
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

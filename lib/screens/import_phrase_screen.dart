@@ -44,7 +44,7 @@ class _ImportPhraseScreenState extends State<ImportPhraseScreen> {
     XChainClient _client = BitcoinClient(_mnemonic);
     var _walletBox = Hive.box('walletBox');
     _walletBox.add(Wallet(
-        _key, '', 'phrase', 'bitcoin', [_client.address], [], _localPath));
+        _key, '', 'phrase', 'bitcoin', [_client.address], [], _localPath, []));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }

@@ -52,7 +52,7 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
 
     var _walletBox = Hive.box('walletBox');
     _walletBox.add(Wallet(_key, '', 'address', _network, [_client.address],
-        [_balance], _localPath));
+        [_balance], _localPath, []));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }

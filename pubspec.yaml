@@ -19,6 +19,7 @@ dependencies:
   # Utility plugins
   http: ^0.13.4
   date_format: ^2.0.6
+  intl: ^0.17.0
 
   # Bitcoin plugins
   xchain_dart:
@@ -44,6 +45,7 @@ dependencies:
   qr_flutter:
     git:
       url: git://github.com/lukef/qr.flutter.git
+
 
 dev_dependencies:
   flutter_test:

@@ -39,6 +39,7 @@ class _WalletCardState extends State<WalletCard> {
 
   Future<void> _refresh(int index) async {
     final WalletManager _walletManager = WalletManager();
+    await _walletManager.updateTransactions(index);
     await _walletManager.updateBalance(index);
     for (num sats in widget.wallet.balance) {
       _balance = _balance + sats;
