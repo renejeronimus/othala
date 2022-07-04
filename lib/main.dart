@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:othala/screens/import_address_screen.dart';
@@ -14,7 +15,10 @@ Future<void> main() async {
   Hive.registerAdapter(WalletAdapter());
   await Hive.initFlutter();
   await Hive.openBox('walletBox');
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
