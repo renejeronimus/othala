@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:othala/screens/camera_screen.dart';
 import 'package:othala/screens/import_address_screen.dart';
 import 'package:othala/screens/import_phrase_screen.dart';
 import 'package:othala/screens/wallet_creation_screen.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/wallet_import_screen': (context) => const WalletImportScreen(),
         '/import_phrase_screen': (context) => const ImportPhraseScreen(),
         '/import_address_screen': (context) => const ImportAddressScreen(),
+        '/camera_screen': (context) => const CameraScreen(),
       },
     );
   }

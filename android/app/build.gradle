@@ -26,7 +26,10 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    // qr_code_scanner: ^1.0.0 requires compileSdkVersion 32.
+    //    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 32
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

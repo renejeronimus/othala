@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:othala/widgets/list_divider.dart';
 import 'package:othala/widgets/list_item.dart';
-import 'package:xchain_dart/xchaindart.dart' as xchain;
 
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
@@ -15,36 +14,6 @@ class WalletImportScreen extends StatefulWidget {
 }
 
 class _WalletImportScreenState extends State<WalletImportScreen> {
-  String _mnemonic = '';
-
-  final _myTextController = TextEditingController();
-
-  void _validateMnemonic() {
-    if (_myTextController.text.isNotEmpty) {
-      _mnemonic = _myTextController.text;
-      if (xchain.validateMnemonic(_mnemonic) == true) {
-        setState(() {});
-      }
-      if (xchain.validateMnemonic(_mnemonic) == false) {
-        setState(() {});
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Start listening to changes.
-    _myTextController.addListener(_validateMnemonic);
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _myTextController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,11 +40,23 @@ class _WalletImportScreenState extends State<WalletImportScreen> {
                 const SizedBox(height: 24.0),
                 GestureDetector(
                   onTap: () {
+                    Navigator.pushNamed(context, '/camera_screen');
+                  },
+                  child: ListItem(
+                    'Scan QR code',
+                    subtitle: 'Use the camera to scan a QR code.',
+                    chevron: true,
+                  ),
+                ),
+                const ListDivider(),
+                GestureDetector(
+                  onTap: () {
                     Navigator.pushNamed(context, '/import_phrase_screen');
                   },
                   child: ListItem(
                     'Enter recovery phrase',
                     subtitle: 'A combination of 12 to 24 words.',
+                    chevron: true,
                   ),
                 ),
                 const ListDivider(),
@@ -86,6 +67,7 @@ class _WalletImportScreenState extends State<WalletImportScreen> {
                   child: ListItem(
                     'Enter wallet address',
                     subtitle: 'For importing a watch-only wallet',
+                    chevron: true,
                   ),
                 ),
                 const Spacer(),

@@ -1,20 +1,9 @@
-import 'dart:io';
-
-import 'package:bitcoin_dart/bitcoin_flutter.dart' as bitcoinClient;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:xchain_dart/xchaindart.dart';
 
-import '../models/secure_item.dart';
-import '../models/unsplash_image.dart';
-import '../models/wallet.dart';
-import '../services/secure_storage.dart';
-import '../services/unsplash_image_provider.dart';
+import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
@@ -26,98 +15,19 @@ class ImportAddressScreen extends StatefulWidget {
 }
 
 class _ImportAddressScreenState extends State<ImportAddressScreen> {
+  late String _address;
   bool _confirmed = false;
-  String _textInput = '';
-  String _network = 'bitcoin';
-
   final _myTextController = TextEditingController();
-
-  // Default background image
-  String _localPath =
-      'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg';
-
-  _encryptToKeyStore() async {
-    String _key = UniqueKey().toString();
-
-    final StorageService _storageService = StorageService();
-    _storageService.writeSecureData(SecureItem(_key, _textInput));
-
-    XChainClient _client = BitcoinClient.readonly(_textInput);
-    if (_network == 'testnet') {
-      _client.setNetwork(bitcoinClient.testnet);
-    }
-
-    List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
-    num _balance = _balances[0]['amount'];
-
-    var _walletBox = Hive.box('walletBox');
-    _walletBox.add(Wallet(_key, '', 'address', _network, [_client.address],
-        [_balance], _localPath, []));
-
-    Navigator.pushReplacementNamed(context, '/home_screen');
-  }
-
-  void _getClipboard() async {
-    ClipboardData? data = await Clipboard.getData('text/plain');
-    _textInput = data!.text!;
-    _myTextController.text = _textInput;
-  }
-
-  void _validateAddress() {
-    if (_myTextController.text.isNotEmpty) {
-      _textInput = _myTextController.text;
-      XChainClient _client = BitcoinClient.readonly(_textInput);
-      if (_client.validateAddress(_textInput) == true) {
-        _confirmed = true;
-      } else {
-        // try validating on testnet.
-        _client.setNetwork(bitcoinClient.testnet);
-        if (_client.validateAddress(_textInput) == true) {
-          _confirmed = true;
-          _network = 'testnet';
-        } else {
-          _confirmed = false;
-        }
-      }
-      setState(() {});
-    }
-  }
-
-  /// Requests a [UnsplashImage] for a given [keyword] query.
-  /// If the given [keyword] is null, any random image is loaded.
-  _loadRandomImage({String? keyword}) async {
-    UnsplashImage res =
-        await UnsplashImageProvider.loadRandomImage(keyword: keyword);
-    _download(res.getRegularUrl());
-  }
-
-  Future<void> _download(String url) async {
-    final response = await http.get(Uri.parse(url));
-
-    // Get the image name
-    final imageName = path.basename(url);
-
-    // Get the document directory path
-    final appDir = await pathProvider.getApplicationDocumentsDirectory();
-    // This is the saved image path
-    _localPath = path.join(appDir.path, imageName);
-
-    // Downloading
-    final imageFile = File(_localPath);
-    await imageFile.writeAsBytes(response.bodyBytes);
-  }
+  final _walletManager = WalletManager();
 
   @override
   void initState() {
     super.initState();
-    // Start listening to changes.
     _myTextController.addListener(_validateAddress);
-    _loadRandomImage(keyword: 'nature');
   }
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     _myTextController.dispose();
     super.dispose();
   }
@@ -156,16 +66,15 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
                   child: Column(
                     children: [
                       TextField(
+                        style: const TextStyle(fontSize: 20),
                         controller: _myTextController,
-                        maxLines: 2,
                         decoration: const InputDecoration(
-                            hintText: 'address starting with a 1, 3 or bc1'),
+                          hintText: 'address starting with a 1, 3 or bc1',
+                        ),
                       ),
                       const SizedBox(height: 8.0),
                       GestureDetector(
-                        onTap: () {
-                          _getClipboard();
-                        },
+                        onTap: () => _getClipboard(),
                         child: const Text(
                           'Paste from clipboard',
                           style: TextStyle(
@@ -182,18 +91,16 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
                 const Spacer(),
                 Row(
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () =>
-                            _confirmed == true ? _encryptToKeyStore() : null,
-                        child: _confirmed == true
-                            ? const CustomFlatButton(
-                                textLabel: 'Import',
-                              )
-                            : const CustomFlatButton(
-                                textLabel: 'Import',
-                                enabled: false,
-                              ),
+                    Visibility(
+                      visible: _confirmed == true,
+                      child: Expanded(
+                        child: GestureDetector(
+                          onTap: () =>
+                              _confirmed == true ? _importWallet() : null,
+                          child: const CustomFlatButton(
+                            textLabel: 'Import',
+                          ),
+                        ),
                       ),
                     ),
                     Expanded(
@@ -210,12 +117,35 @@ class _ImportAddressScreenState extends State<ImportAddressScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16.0),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _importWallet() {
+    _walletManager.encryptToKeyStore(address: _address);
+    Navigator.pushReplacementNamed(context, '/home_screen');
+  }
+
+  void _getClipboard() async {
+    ClipboardData? data = await Clipboard.getData('text/plain');
+    _myTextController.text = data!.text!;
+  }
+
+  void _validateAddress() {
+    _address = _stripMeta(_myTextController.text);
+    if (_myTextController.text.isNotEmpty) {
+      _confirmed = _walletManager.validateAddress(_address);
+      setState(() {});
+    }
+  }
+
+  String _stripMeta(source) {
+    // strip meta-data (e.g. bitcoin:bc1...).
+    List<AssetAddress> _addresses = substractAddress(source);
+    return _addresses.first.address;
   }
 }
