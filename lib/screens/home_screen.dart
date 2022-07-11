@@ -27,71 +27,74 @@ class _HomeScreenState extends State<HomeScreen> {
           valueListenable: Hive.box('walletBox').listenable(),
           builder: (context, Box box, widget) {
             return Scaffold(
-              backgroundColor: kBlackColor,
-              body: Column(
-                children: [
-                  Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: SvgPicture.asset(
-                          'assets/icons/logo.svg',
-                          color: kYellowColor,
-                          height: 40.0,
+              body: Container(
+                padding: const EdgeInsets.only(
+                  bottom: 16.0,
+                  left: 8.0,
+                  right: 8.0,
+                ),
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: SvgPicture.asset(
+                            'assets/icons/logo.svg',
+                            color: kYellowColor,
+                            height: 40.0,
+                          ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: const Icon(Icons.crop_free),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/camera_screen');
-                          },
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.crop_free),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/camera_screen');
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: PageView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _walletBox.length + 1,
-                        controller: _controller,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == _walletBox.length) {
-                            return const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: WalletCardNew(),
-                            );
-                          } else {
-                            Wallet _wallet = _walletBox.getAt(index);
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: WalletCard(_wallet, index),
-                            );
-                          }
-                        },
-                        onPageChanged: (int index) {
-                          _currentPageNotifier.value = index;
-                        }),
-                  ),
-                  // Ignore CirclePageIndicator when fewer than 2 screens.
-                  Visibility(
-                    visible: _walletBox.length > 0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Center(
-                        child: CirclePageIndicator(
-                          size: 8.0,
-                          selectedSize: 12.0,
-                          dotColor: kWhiteColor,
-                          selectedDotColor: kYellowColor,
+                      ],
+                    ),
+                    Expanded(
+                      child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
                           itemCount: _walletBox.length + 1,
-                          currentPageNotifier: _currentPageNotifier,
+                          controller: _controller,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index == _walletBox.length) {
+                              return const WalletCardNew();
+                            } else {
+                              Wallet _wallet = _walletBox.getAt(index);
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: WalletCard(_wallet, index),
+                              );
+                            }
+                          },
+                          onPageChanged: (int index) {
+                            _currentPageNotifier.value = index;
+                          }),
+                    ),
+                    // Ignore CirclePageIndicator when fewer than 2 screens.
+                    Visibility(
+                      visible: _walletBox.length > 0,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Center(
+                          child: CirclePageIndicator(
+                            size: 8.0,
+                            selectedSize: 12.0,
+                            dotColor: kWhiteColor,
+                            selectedDotColor: kYellowColor,
+                            itemCount: _walletBox.length + 1,
+                            currentPageNotifier: _currentPageNotifier,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }),

@@ -26,14 +26,128 @@ class ImportPhraseScreen extends StatefulWidget {
 }
 
 class _ImportPhraseScreenState extends State<ImportPhraseScreen> {
-  bool _confirmed = false;
-  String _mnemonic = '';
-
-  final _myTextController = TextEditingController();
-
   // Default background image
   String _localPath =
       'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg';
+
+  bool _confirmed = false;
+  String _mnemonic = '';
+  final _myTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Start listening to changes.
+    _myTextController.addListener(_validateMnemonic);
+    _loadRandomImage(keyword: 'nature');
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _myTextController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          padding: const EdgeInsets.only(
+            bottom: 16.0,
+            left: 8.0,
+            right: 8.0,
+          ),
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: SvgPicture.asset(
+                  'assets/icons/logo.svg',
+                  color: kYellowColor,
+                  height: 40.0,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Enter your 12-word recovery phrase to import your wallets.',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  color: kBlackColor,
+                ),
+                child: Column(
+                  children: [
+                    TextField(
+                      style: const TextStyle(fontSize: 20),
+                      controller: _myTextController,
+                      decoration: const InputDecoration(
+                        hintText: '12 words separated by a single space.',
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    GestureDetector(
+                      onTap: () {
+                        _getClipboard();
+                      },
+                      child: const Text(
+                        'Paste from clipboard',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: kYellowColor,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () =>
+                          _confirmed == true ? _encryptToKeyStore() : null,
+                      child: _confirmed == true
+                          ? const CustomFlatButton(
+                              textLabel: 'Import',
+                            )
+                          : const CustomFlatButton(
+                              textLabel: 'Import',
+                              enabled: false,
+                            ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const CustomFlatButton(
+                        textLabel: 'Cancel',
+                        buttonColor: kDarkBackgroundColor,
+                        fontColor: kWhiteColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   _encryptToKeyStore() async {
     String _key = UniqueKey().toString();
@@ -93,117 +207,5 @@ class _ImportPhraseScreenState extends State<ImportPhraseScreen> {
     // Downloading
     final imageFile = File(_localPath);
     await imageFile.writeAsBytes(response.bodyBytes);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Start listening to changes.
-    _myTextController.addListener(_validateMnemonic);
-    _loadRandomImage(keyword: 'nature');
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    _myTextController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: kBlackColor,
-        child: SafeArea(
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/logo.svg',
-                    color: kYellowColor,
-                    height: 40.0,
-                  ),
-                ),
-                const Text(
-                  'Enter your 12-word recovery phrase to import your wallets.',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 24.0),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    color: kBlackColor,
-                  ),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _myTextController,
-                        maxLines: 2,
-                        decoration: const InputDecoration(
-                            hintText: '12 words separated by a single space.'),
-                      ),
-                      const SizedBox(height: 8.0),
-                      GestureDetector(
-                        onTap: () {
-                          _getClipboard();
-                        },
-                        child: const Text(
-                          'Paste from clipboard',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: kYellowColor,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () =>
-                            _confirmed == true ? _encryptToKeyStore() : null,
-                        child: _confirmed == true
-                            ? const CustomFlatButton(
-                                textLabel: 'Import',
-                              )
-                            : const CustomFlatButton(
-                                textLabel: 'Import',
-                                enabled: false,
-                              ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const CustomFlatButton(
-                          textLabel: 'Cancel',
-                          buttonColor: kDarkBackgroundColor,
-                          fontColor: kWhiteColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16.0),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

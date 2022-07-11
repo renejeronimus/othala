@@ -35,8 +35,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
     return SafeArea(
       child: Scaffold(
         body: Container(
-          color: kBlackColor,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.only(
+            bottom: 16.0,
+            left: 8.0,
+            right: 8.0,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

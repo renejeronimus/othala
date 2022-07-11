@@ -25,13 +25,79 @@ class WalletSettingsScreen extends StatefulWidget {
 class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
   final Box _walletBox = Hive.box('walletBox');
 
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          padding: const EdgeInsets.only(
+            bottom: 16.0,
+            left: 8.0,
+            right: 8.0,
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: SvgPicture.asset(
+                  'assets/icons/logo.svg',
+                  color: kYellowColor,
+                  height: 40.0,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  _showDialog();
+                },
+                child: ListItem(
+                  'Delete wallet',
+                  subtitle: 'Warning: may cause loss of funds',
+                  subtitleColor: kRedColor,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  _changeNetwork();
+                },
+                child: Visibility(
+                  visible: widget.wallet.type == 'phrase' ? true : false,
+                  child: ListItem(
+                    'Toggle nework',
+                    subtitle: 'Selected network: ${widget.wallet.network}',
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const CustomFlatButton(
+                        textLabel: 'Cancel',
+                        buttonColor: kDarkBackgroundColor,
+                        fontColor: kWhiteColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showDialog() {
     showDialog(
       barrierDismissible: true,
       context: context,
       builder: (context) {
         return Dialog(
-          backgroundColor: kDarkNeutral1Color, // your color
+          backgroundColor: kDarkNeutral1Color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -80,7 +146,6 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 1,
                         child: GestureDetector(
                           child: Container(
                             decoration: const BoxDecoration(
@@ -103,7 +168,6 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                         ),
                       ),
                       Expanded(
-                        flex: 1,
                         child: GestureDetector(
                           child: Container(
                             decoration: const BoxDecoration(
@@ -172,70 +236,5 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
     setState(() {
       _client.purgeClient();
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: kBlackColor,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/logo.svg',
-                    color: kYellowColor,
-                    height: 40.0,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _showDialog();
-                  },
-                  child: ListItem(
-                    'Delete wallet',
-                    subtitle: 'Warning: may cause loss of funds',
-                    subtitleColor: kRedColor,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _changeNetwork();
-                  },
-                  child: Visibility(
-                    visible: widget.wallet.type == 'phrase' ? true : false,
-                    child: ListItem(
-                      'Toggle nework',
-                      subtitle: 'Selected network: ${widget.wallet.network}',
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const CustomFlatButton(
-                          textLabel: 'Cancel',
-                          buttonColor: kDarkBackgroundColor,
-                          fontColor: kWhiteColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
