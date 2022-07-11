@@ -74,18 +74,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           _currentPageNotifier.value = index;
                         }),
                   ),
-                  const SizedBox(height: 16.0),
                   // Ignore CirclePageIndicator when fewer than 2 screens.
                   Visibility(
                     visible: _walletBox.length > 0,
-                    child: Center(
-                      child: CirclePageIndicator(
-                        size: 8.0,
-                        selectedSize: 12.0,
-                        dotColor: kWhiteColor,
-                        selectedDotColor: kYellowColor,
-                        itemCount: _walletBox.length + 1,
-                        currentPageNotifier: _currentPageNotifier,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(
+                        child: CirclePageIndicator(
+                          size: 8.0,
+                          selectedSize: 12.0,
+                          dotColor: kWhiteColor,
+                          selectedDotColor: kYellowColor,
+                          itemCount: _walletBox.length + 1,
+                          currentPageNotifier: _currentPageNotifier,
+                        ),
                       ),
                     ),
                   ),

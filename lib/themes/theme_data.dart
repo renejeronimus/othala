@@ -15,3 +15,27 @@ const kDarkGreyColor = Color(0xFF191919);
 const kBlackColor = Color(0xFF000000);
 const kBlackOverlayColor = Color(0xCC000000);
 const kTransparentColor = Colors.transparent;
+
+/// Dark theme
+ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  scaffoldBackgroundColor: kDarkBackgroundColor,
+  primaryColor: kYellowColor,
+  dividerColor: kDarkNeutral4Color,
+  backgroundColor: kDarkBackgroundColor,
+
+  // Text
+  fontFamily: 'Rajdhani',
+);
+
+/// Light theme
+ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
+  scaffoldBackgroundColor: kWhiteColor,
+  primaryColor: kYellowColor,
+  dividerColor: kDarkNeutral4Color,
+  backgroundColor: kWhiteColor,
+
+  // Text
+  fontFamily: 'Rajdhani',
+);

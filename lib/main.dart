@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:othala/screens/camera_screen.dart';
 import 'package:othala/screens/import_address_screen.dart';
 import 'package:othala/screens/import_phrase_screen.dart';
 import 'package:othala/screens/wallet_creation_screen.dart';
 import 'package:othala/screens/wallet_import_screen.dart';
+import 'package:othala/themes/theme_data.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/loading_screen.dart';
@@ -18,6 +18,7 @@ Future<void> main() async {
   Hive.registerAdapter(TransactionAdapter());
   await Hive.initFlutter();
   await Hive.openBox('walletBox');
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
@@ -31,24 +32,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Othala',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        textTheme: GoogleFonts.rajdhaniTextTheme(
-          Theme.of(context).primaryTextTheme,
-        ),
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        textTheme: GoogleFonts.rajdhaniTextTheme(
-          Theme.of(context).primaryTextTheme,
-        ),
-      ),
-      /* dark theme settings */
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
-      /* ThemeMode.system to follow system theme,
-         ThemeMode.light for light theme,
-         ThemeMode.dark for dark theme
-      */
       debugShowCheckedModeBanner: false,
       initialRoute: '/loading_screen',
       routes: {

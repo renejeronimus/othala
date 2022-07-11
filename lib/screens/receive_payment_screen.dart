@@ -42,98 +42,89 @@ class _ReceivePaymentScreenState extends State<ReceivePaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: kBlackColor,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/logo.svg',
-                    color: kYellowColor,
-                    height: 40.0,
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: SvgPicture.asset(
+                'assets/icons/logo.svg',
+                color: kYellowColor,
+                height: 40.0,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: const BoxDecoration(
+                  color: kWhiteColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(16.0),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.only(
-                    left: 24.0,
-                    top: 32.0,
-                    right: 32.0,
-                    bottom: 16.0,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: kWhiteColor,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(16.0),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      QrImageView(
-                        eyeStyle: const QrEyeStyle(
-                          eyeShape: QrEyeShape.square,
-                          color: kDarkBackgroundColor,
-                        ),
-                        dataModuleStyle: const QrDataModuleStyle(
-                            dataModuleShape: QrDataModuleShape.circle,
-                            color: kDarkBackgroundColor),
-                        data: widget.wallet.address.first,
-                        version: QrVersions.auto,
-                        size: 320,
+                child: Column(
+                  children: [
+                    QrImageView(
+                      eyeStyle: const QrEyeStyle(
+                        eyeShape: QrEyeShape.square,
+                        color: kDarkBackgroundColor,
                       ),
-                      const SizedBox(height: 24.0),
-                      GestureDetector(
-                        onTap: () {
-                          _setClipboard();
-                        },
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.wallet.address.first,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: kDarkNeutral4Color,
-                                ),
+                      dataModuleStyle: const QrDataModuleStyle(
+                          dataModuleShape: QrDataModuleShape.circle,
+                          color: kDarkBackgroundColor),
+                      data: widget.wallet.address.first,
+                      version: QrVersions.auto,
+                      size: 320,
+                    ),
+                    const SizedBox(height: 24.0),
+                    GestureDetector(
+                      onTap: () {
+                        _setClipboard();
+                      },
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              widget.wallet.address.first,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: kDarkNeutral4Color,
                               ),
                             ),
-                            const SizedBox(width: 16.0),
-                            const Icon(
-                              CupertinoIcons.doc_on_doc_fill,
-                              color: kDarkNeutral4Color,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: const CustomFlatButton(
-                          textLabel: 'Cancel',
-                          buttonColor: kDarkBackgroundColor,
-                          fontColor: kWhiteColor,
-                        ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          const Icon(
+                            CupertinoIcons.doc_on_doc_fill,
+                            color: kDarkNeutral4Color,
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16.0),
+              ),
+            ),
+            const Spacer(),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const CustomFlatButton(
+                      textLabel: 'Cancel',
+                      buttonColor: kDarkBackgroundColor,
+                      fontColor: kWhiteColor,
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );

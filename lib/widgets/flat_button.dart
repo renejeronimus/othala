@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:othala/themes/theme_data.dart';
+
+import '../themes/theme_data.dart';
 
 class CustomFlatButton extends StatelessWidget {
   const CustomFlatButton({

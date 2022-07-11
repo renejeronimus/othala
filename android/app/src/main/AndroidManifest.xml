@@ -7,7 +7,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
    <application
-        android:label="othala"
+        android:label="Othala"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
        android:allowBackup="true">
