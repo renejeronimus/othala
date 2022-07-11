@@ -5,11 +5,11 @@ import 'package:hive/hive.dart';
 import 'package:xchain_dart/xchaindart.dart';
 
 import '../models/wallet.dart';
+import '../screens/home_screen.dart';
 import '../services/secure_storage.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 import '../widgets/list_item.dart';
-import 'home_screen.dart';
 
 class WalletSettingsScreen extends StatefulWidget {
   const WalletSettingsScreen(this.wallet, this.walletIndex, {Key? key})

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../themes/theme_data.dart';
-import 'flat_button.dart';
+import '../widgets/flat_button.dart';
 
 class WalletCardNew extends StatefulWidget {
   const WalletCardNew({Key? key}) : super(key: key);

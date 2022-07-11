@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:othala/widgets/list_divider.dart';
-import 'package:othala/widgets/list_item.dart';
 
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
+import '../widgets/list_divider.dart';
+import '../widgets/list_item.dart';
 
 class WalletImportScreen extends StatefulWidget {
   const WalletImportScreen({Key? key}) : super(key: key);

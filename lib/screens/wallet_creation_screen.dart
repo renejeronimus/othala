@@ -7,13 +7,13 @@ import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:othala/models/secure_item.dart';
-import 'package:othala/models/wallet.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:xchain_dart/xchaindart.dart';
 
+import '../models/secure_item.dart';
 import '../models/unsplash_image.dart';
+import '../models/wallet.dart';
 import '../services/secure_storage.dart';
 import '../services/unsplash_image_provider.dart';
 import '../themes/theme_data.dart';

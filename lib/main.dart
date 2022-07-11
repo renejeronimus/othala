@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:othala/screens/camera_screen.dart';
-import 'package:othala/screens/import_address_screen.dart';
-import 'package:othala/screens/import_phrase_screen.dart';
-import 'package:othala/screens/wallet_creation_screen.dart';
-import 'package:othala/screens/wallet_import_screen.dart';
-import 'package:othala/themes/theme_data.dart';
 
+import '../models/transaction.dart';
+import '../models/wallet.dart';
+import '../screens/camera_screen.dart';
 import '../screens/home_screen.dart';
+import '../screens/import_address_screen.dart';
+import '../screens/import_phrase_screen.dart';
 import '../screens/loading_screen.dart';
-import 'models/transaction.dart';
-import 'models/wallet.dart';
+import '../screens/wallet_creation_screen.dart';
+import '../screens/wallet_import_screen.dart';
+import '../themes/theme_data.dart';
 
 Future<void> main() async {
   Hive.registerAdapter(WalletAdapter());

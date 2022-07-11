@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:othala/models/transaction.dart';
+
+import '../models/transaction.dart';
 
 part 'wallet.g.dart';
 

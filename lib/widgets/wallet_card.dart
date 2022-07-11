@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:othala/screens/wallet_screen.dart';
 
 import '../models/wallet.dart';
 import '../screens/receive_payment_screen.dart';
+import '../screens/wallet_screen.dart';
 import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
-import 'flat_button.dart';
+import '../widgets/flat_button.dart';
 
 class WalletCard extends StatefulWidget {
   const WalletCard(this.wallet, this.walletIndex, {Key? key}) : super(key: key);

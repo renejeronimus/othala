@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:othala/models/transaction.dart';
-import 'package:othala/screens/wallet_settings_screen.dart';
-import 'package:othala/widgets/list_divider.dart';
 
+import '../models/transaction.dart';
 import '../models/unsplash_image.dart';
 import '../models/wallet.dart';
+import '../screens/wallet_settings_screen.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
+import '../widgets/list_divider.dart';
 import '../widgets/list_item_transaction.dart';
 
 class WalletScreen extends StatefulWidget {

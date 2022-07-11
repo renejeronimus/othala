@@ -4,16 +4,16 @@ import 'package:bitcoin_dart/bitcoin_flutter.dart' as bitcoinClient;
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-import 'package:othala/models/transaction.dart';
-import 'package:othala/services/secure_storage.dart';
-import 'package:othala/services/unsplash_image_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:xchain_dart/xchaindart.dart';
 
 import '../models/secure_item.dart';
+import '../models/transaction.dart';
 import '../models/unsplash_image.dart';
 import '../models/wallet.dart';
+import '../services/secure_storage.dart';
+import '../services/unsplash_image_provider.dart';
 
 class WalletManager extends ChangeNotifier {
   final Box _walletBox = Hive.box('walletBox');
