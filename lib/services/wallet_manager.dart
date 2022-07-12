@@ -17,8 +17,21 @@ import '../services/unsplash_image_provider.dart';
 
 class WalletManager extends ChangeNotifier {
   final Box _walletBox = Hive.box('walletBox');
+  final StorageService _storageService = StorageService();
 
+  // Wallet client can be either read-only or full.
   late XChainClient _client;
+
+  Future<void> deleteWallet(int walletIndex) async {
+    Wallet _wallet = _walletBox.getAt(walletIndex);
+
+    // Delete wallet from Secure storage.
+    StorageService _storageService = StorageService();
+    _storageService.deleteSecureData(_wallet.key);
+
+    // Delete wallet from Hive box.
+    _walletBox.deleteAt(walletIndex);
+  }
 
   /// Secure store wallet
   void encryptToKeyStore({String? mnemonic, String? address}) async {
@@ -43,7 +56,6 @@ class WalletManager extends ChangeNotifier {
     String _network = getNetworkType(address);
 
     // Secure storage
-    final StorageService _storageService = StorageService();
     _storageService.writeSecureData(SecureItem(_key, _secureData));
 
     num _balance = await getBalance(_client.address, _network);
@@ -54,6 +66,62 @@ class WalletManager extends ChangeNotifier {
 
     _walletBox.add(Wallet(
         _key, '', _type, _network, [address], [_balance], _localPath, []));
+  }
+
+  /// Retrieve wallet balance.
+  Future<double> getBalance(address, network) async {
+    _client = BitcoinClient.readonly(address);
+    String _asset = 'BTC';
+    if (network == 'testnet') {
+      _client.setNetwork(bitcoinClient.testnet);
+      _asset = 'tBTC';
+    }
+    List _balances = await _client.getBalance(_client.address, 'BTC.$_asset');
+    double _balance = _balances[0]['amount'];
+    return _balance;
+  }
+
+  String? getInputType(String input) {
+    // check if input is an address format.
+    List<AssetAddress> _addresses = substractAddress(input);
+    if (_addresses.isNotEmpty) {
+      String _address = _addresses.first.address;
+      bool _isValid = validateAddress(_address);
+      if (_isValid == true) {
+        return 'address';
+      }
+    }
+    return null;
+  }
+
+  String getNetworkType(String address) {
+    XChainClient _client = BitcoinClient.readonly(address);
+    _client.setNetwork(bitcoinClient.testnet);
+    if (_client.validateAddress(address) == true) {
+      return 'testnet';
+    } else {
+      return 'bitcoin';
+    }
+  }
+
+  Future<void> setNetwork(int walletIndex, String network) async {
+    Wallet _wallet = _walletBox.getAt(walletIndex);
+
+    // Get the seed to update the address on the new network
+    String? _seed = await _storageService.readSecureData(_wallet.key);
+    XChainClient _client = BitcoinClient(_seed!);
+
+    if (network == 'bitcoin') {
+      _wallet.network = 'bitcoin';
+      _client.setNetwork(bitcoinClient.bitcoin);
+    } else if (network == 'testnet') {
+      _wallet.network = 'testnet';
+      _client.setNetwork(bitcoinClient.testnet);
+    }
+    _wallet.address = [_client.getAddress(0)];
+
+    // update box entry with new network & address.
+    _walletBox.putAt(walletIndex, _wallet);
   }
 
   /// Update all wallet balances.
@@ -80,19 +148,6 @@ class WalletManager extends ChangeNotifier {
     List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
     _wallet.balance = [_balances[0]['amount']];
     _walletBox.putAt(index, _wallet);
-  }
-
-  /// Retrieve wallet balance.
-  Future<double> getBalance(address, network) async {
-    _client = BitcoinClient.readonly(address);
-    String _asset = 'BTC';
-    if (network == 'testnet') {
-      _client.setNetwork(bitcoinClient.testnet);
-      _asset = 'tBTC';
-    }
-    List _balances = await _client.getBalance(_client.address, 'BTC.$_asset');
-    double _balance = _balances[0]['amount'];
-    return _balance;
   }
 
   Future<void> updateTransactions(index) async {
@@ -151,29 +206,6 @@ class WalletManager extends ChangeNotifier {
 
   bool validatePhrase(String input) {
     return validateMnemonic(input);
-  }
-
-  String? getInputType(String input) {
-    // check if input is an address format.
-    List<AssetAddress> _addresses = substractAddress(input);
-    if (_addresses.isNotEmpty) {
-      String _address = _addresses.first.address;
-      bool _isValid = validateAddress(_address);
-      if (_isValid == true) {
-        return 'address';
-      }
-    }
-    return null;
-  }
-
-  String getNetworkType(String address) {
-    XChainClient _client = BitcoinClient.readonly(address);
-    _client.setNetwork(bitcoinClient.testnet);
-    if (_client.validateAddress(address) == true) {
-      return 'testnet';
-    } else {
-      return 'bitcoin';
-    }
   }
 
   /// Requests a [UnsplashImage] for a given [keyword] query.

@@ -1,21 +1,17 @@
-import 'package:bitcoin_dart/bitcoin_flutter.dart' as bitcoinClient;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
-import 'package:xchain_dart/xchaindart.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../models/wallet.dart';
 import '../screens/home_screen.dart';
-import '../services/secure_storage.dart';
+import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 import '../widgets/list_item.dart';
 
 class WalletSettingsScreen extends StatefulWidget {
-  const WalletSettingsScreen(this.wallet, this.walletIndex, {Key? key})
-      : super(key: key);
+  const WalletSettingsScreen(this.walletIndex, {Key? key}) : super(key: key);
 
-  final Wallet wallet;
   final int walletIndex;
 
   @override
@@ -23,71 +19,85 @@ class WalletSettingsScreen extends StatefulWidget {
 }
 
 class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
-  final Box _walletBox = Hive.box('walletBox');
+  final WalletManager _walletManager = WalletManager();
+  late Wallet _wallet;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: Container(
-          padding: const EdgeInsets.only(
-            bottom: 16.0,
-            left: 8.0,
-            right: 8.0,
-          ),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: SvgPicture.asset(
-                  'assets/icons/logo.svg',
-                  color: kYellowColor,
-                  height: 40.0,
+      child: ValueListenableBuilder(
+          valueListenable: Hive.box('walletBox').listenable(),
+          builder: (context, Box box, widget2) {
+            if (box.isNotEmpty) {
+              _wallet = box.getAt(widget.walletIndex);
+            }
+            return Scaffold(
+              body: Container(
+                padding: const EdgeInsets.only(
+                  bottom: 16.0,
+                  left: 8.0,
+                  right: 8.0,
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  _showDialog();
-                },
-                child: ListItem(
-                  'Delete wallet',
-                  subtitle: 'Warning: may cause loss of funds',
-                  subtitleColor: kRedColor,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  _changeNetwork();
-                },
-                child: Visibility(
-                  visible: widget.wallet.type == 'phrase' ? true : false,
-                  child: ListItem(
-                    'Toggle nework',
-                    subtitle: 'Selected network: ${widget.wallet.network}',
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const CustomFlatButton(
-                        textLabel: 'Cancel',
-                        buttonColor: kDarkBackgroundColor,
-                        fontColor: kWhiteColor,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: SvgPicture.asset(
+                        'assets/icons/logo.svg',
+                        color: kYellowColor,
+                        height: 40.0,
                       ),
                     ),
-                  ),
-                ],
+                    GestureDetector(
+                      onTap: () {
+                        _showDialog();
+                      },
+                      child: ListItem(
+                        'Delete wallet',
+                        subtitle: 'Warning: may cause loss of funds',
+                        subtitleColor: kRedColor,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (_wallet.network == 'bitcoin') {
+                          _walletManager.setNetwork(
+                              widget.walletIndex, 'testnet');
+                        } else if (_wallet.network == 'testnet') {
+                          _walletManager.setNetwork(
+                              widget.walletIndex, 'testnet');
+                        }
+                      },
+                      child: Visibility(
+                        visible: _wallet.type == 'phrase' ? true : false,
+                        child: ListItem(
+                          'Toggle nework',
+                          subtitle: 'Selected network: ${_wallet.network}',
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const CustomFlatButton(
+                              textLabel: 'Cancel',
+                              buttonColor: kDarkBackgroundColor,
+                              fontColor: kWhiteColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }),
     );
   }
 
@@ -200,12 +210,7 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
   }
 
   Future<void> _deleteWallet() async {
-    // Delete wallet from Secure storage.
-    StorageService _storageService = StorageService();
-    _storageService.deleteSecureData(widget.wallet.key);
-
-    // Delete wallet from Hive box.
-    _walletBox.deleteAt(widget.walletIndex);
+    await _walletManager.deleteWallet(widget.walletIndex);
 
     Navigator.pushReplacement(
       context,
@@ -215,26 +220,5 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
         reverseTransitionDuration: Duration.zero,
       ),
     );
-    setState(() {});
-  }
-
-  Future<void> _changeNetwork() async {
-    String networkType = widget.wallet.network;
-    StorageService _storageService = StorageService();
-    String? _seed = await _storageService.readSecureData(widget.wallet.key);
-    XChainClient _client = BitcoinClient(_seed!);
-    if (networkType == 'bitcoin') {
-      widget.wallet.network = 'testnet';
-      _client.setNetwork(bitcoinClient.testnet);
-    } else {
-      widget.wallet.network = 'bitcoin';
-      _client.setNetwork(bitcoinClient.bitcoin);
-    }
-    widget.wallet.address = [_client.getAddress(0)];
-    _walletBox.putAt(widget.walletIndex, widget.wallet);
-
-    setState(() {
-      _client.purgeClient();
-    });
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../models/wallet.dart';
 import '../screens/receive_payment_screen.dart';
 import '../screens/wallet_screen.dart';
-import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
@@ -22,35 +21,12 @@ class WalletCard extends StatefulWidget {
 class _WalletCardState extends State<WalletCard> {
   num _balance = 0.0;
 
-  showImage() {
-    if (FileSystemEntity.typeSync(widget.wallet.imagePath) ==
-        FileSystemEntityType.notFound) {
-      return Image.asset(
-        'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Image.file(
-        File(widget.wallet.imagePath),
-        fit: BoxFit.cover,
-      );
-    }
-  }
-
-  Future<void> _refresh(int index) async {
-    final WalletManager _walletManager = WalletManager();
-    await _walletManager.updateTransactions(index);
-    await _walletManager.updateBalance(index);
-    for (num sats in widget.wallet.balance) {
-      _balance = _balance + sats;
-    }
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();
-    _refresh(widget.walletIndex);
+    for (num sats in widget.wallet.balance) {
+      _balance = _balance + sats;
+    }
   }
 
   @override
@@ -70,13 +46,13 @@ class _WalletCardState extends State<WalletCard> {
                         context,
                         MaterialPageRoute<void>(
                           builder: (BuildContext context) =>
-                              WalletScreen(widget.wallet, widget.walletIndex),
+                              WalletScreen(widget.walletIndex),
                         ),
                       );
                     },
                     child: Hero(
                       tag: 'imageHero',
-                      child: showImage(),
+                      child: _showImage(),
                     ),
                   ),
                   Positioned(
@@ -154,5 +130,20 @@ class _WalletCardState extends State<WalletCard> {
         ),
       ),
     );
+  }
+
+  _showImage() {
+    if (FileSystemEntity.typeSync(widget.wallet.imagePath) ==
+        FileSystemEntityType.notFound) {
+      return Image.asset(
+        'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.file(
+        File(widget.wallet.imagePath),
+        fit: BoxFit.cover,
+      );
+    }
   }
 }
