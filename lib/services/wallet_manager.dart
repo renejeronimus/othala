@@ -59,13 +59,15 @@ class WalletManager extends ChangeNotifier {
     _storageService.writeSecureData(SecureItem(_key, _secureData));
 
     num _balance = await getBalance(_client.address, _network);
+    List<Transaction> _transactions =
+        await getTransactions(_client.address, _network);
 
     var _walletBox = Hive.box('walletBox');
 
     String _localPath = await _loadRandomImage(keyword: 'nature');
 
-    _walletBox.add(Wallet(
-        _key, '', _type, _network, [address], [_balance], _localPath, []));
+    _walletBox.add(Wallet(_key, '', _type, _network, [address], [_balance],
+        _localPath, _transactions));
   }
 
   /// Retrieve wallet balance.
@@ -79,6 +81,27 @@ class WalletManager extends ChangeNotifier {
     List _balances = await _client.getBalance(_client.address, 'BTC.$_asset');
     double _balance = _balances[0]['amount'];
     return _balance;
+  }
+
+  Future<List<Transaction>> getTransactions(address, network) async {
+    XChainClient _client = BitcoinClient.readonly(address[0]);
+    if (network == 'testnet') {
+      _client.setNetwork(bitcoinClient.testnet);
+    }
+    List<Transaction> _transactions = [];
+    List _rawTxs = await _client.getTransactions(address[0]);
+    for (var _rawTx in _rawTxs) {
+      String _transactionId = _rawTx['txid'];
+      DateTime _transactionBroadcast = _rawTx['date'];
+      var _confirmation = _rawTx['confirmed'];
+      List<Map> _from = _rawTx['from'];
+      List<Map> _to = _rawTx['to'];
+      Transaction _tx = Transaction(
+          _transactionId, _transactionBroadcast, _confirmation, _from, _to);
+      _transactions.add(_tx);
+    }
+
+    return _transactions;
   }
 
   String? getInputType(String input) {
