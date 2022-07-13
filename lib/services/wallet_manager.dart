@@ -84,12 +84,12 @@ class WalletManager extends ChangeNotifier {
   }
 
   Future<List<Transaction>> getTransactions(address, network) async {
-    XChainClient _client = BitcoinClient.readonly(address[0]);
+    XChainClient _client = BitcoinClient.readonly(address);
     if (network == 'testnet') {
       _client.setNetwork(bitcoinClient.testnet);
     }
     List<Transaction> _transactions = [];
-    List _rawTxs = await _client.getTransactions(address[0]);
+    List _rawTxs = await _client.getTransactions(address);
     for (var _rawTx in _rawTxs) {
       String _transactionId = _rawTx['txid'];
       DateTime _transactionBroadcast = _rawTx['date'];
@@ -100,7 +100,6 @@ class WalletManager extends ChangeNotifier {
           _transactionId, _transactionBroadcast, _confirmation, _from, _to);
       _transactions.add(_tx);
     }
-
     return _transactions;
   }
 

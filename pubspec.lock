@@ -100,7 +100,7 @@ packages:
       name: build_config
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.0"
   build_daemon:
     dependency: transitive
     description:
@@ -121,7 +121,7 @@ packages:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.11"
+    version: "2.2.0"
   build_runner_core:
     dependency: transitive
     description:
@@ -802,7 +802,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: a7167953b77b29e01e927b5b80e30e394cc0a4a5
+      resolved-ref: e0a2e967792b7e52b03aab95866a36ff2bc7b4fb
       url: "https://github.com/renejeronimus/xchain_dart"
     source: git
     version: "1.0.2"

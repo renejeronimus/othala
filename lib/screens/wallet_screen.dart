@@ -50,7 +50,7 @@ class _WalletScreenState extends State<WalletScreen> {
       child: ValueListenableBuilder(
           valueListenable: Hive.box('walletBox').listenable(),
           builder: (context, Box box, widget2) {
-            if (box.isNotEmpty) {
+            if (widget.walletIndex < box.length) {
               _wallet = box.getAt(widget.walletIndex);
             }
             return Scaffold(
@@ -175,6 +175,7 @@ class _WalletScreenState extends State<WalletScreen> {
       if (vin.values.first == address) {
         // Filter out transactions to self
         for (Map vout in transaction.to) {
+          _io = address;
           if (vout.values.first != address) {
             _amount = _amount - vout.values.elementAt(1);
             _io = vout.values.elementAt(0);

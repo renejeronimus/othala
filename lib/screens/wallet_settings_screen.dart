@@ -28,7 +28,7 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
       child: ValueListenableBuilder(
           valueListenable: Hive.box('walletBox').listenable(),
           builder: (context, Box box, widget2) {
-            if (box.isNotEmpty) {
+            if (widget.walletIndex < box.length) {
               _wallet = box.getAt(widget.walletIndex);
             }
             return Scaffold(
