@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:page_view_indicators/circle_page_indicator.dart';
 
-import '../models/wallet.dart';
 import '../themes/theme_data.dart';
 import '../widgets/wallet_card.dart';
 import '../widgets/wallet_card_new.dart';
@@ -65,10 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (index == _walletBox.length) {
                               return const WalletCardNew();
                             } else {
-                              Wallet _wallet = _walletBox.getAt(index);
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
-                                child: WalletCard(_wallet, index),
+                                child: WalletCard(index),
                               );
                             }
                           },

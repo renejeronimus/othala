@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../models/wallet.dart';
 import '../screens/receive_payment_screen.dart';
@@ -9,9 +10,8 @@ import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
 
 class WalletCard extends StatefulWidget {
-  const WalletCard(this.wallet, this.walletIndex, {Key? key}) : super(key: key);
+  const WalletCard(this.walletIndex, {Key? key}) : super(key: key);
 
-  final Wallet wallet;
   final int walletIndex;
 
   @override
@@ -19,121 +19,122 @@ class WalletCard extends StatefulWidget {
 }
 
 class _WalletCardState extends State<WalletCard> {
-  num _balance = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    for (num sats in widget.wallet.balance) {
-      _balance = _balance + sats;
-    }
-  }
+  late Wallet _wallet;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBlackColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
+    return SafeArea(
+      child: ValueListenableBuilder(
+          valueListenable: Hive.box('walletBox').listenable(),
+          builder: (context, Box box, widget2) {
+            if (widget.walletIndex < box.length) {
+              _wallet = box.getAt(widget.walletIndex);
+            }
+            return Scaffold(
+              body: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              WalletScreen(widget.walletIndex),
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    WalletScreen(widget.walletIndex),
+                              ),
+                            );
+                          },
+                          child: Hero(
+                            tag: 'imageHero',
+                            child: _showImage(),
+                          ),
                         ),
-                      );
-                    },
-                    child: Hero(
-                      tag: 'imageHero',
-                      child: _showImage(),
+                        Positioned(
+                          top: 48,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: kBlackColor.withOpacity(0.5),
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(40.0),
+                                bottomRight: Radius.circular(40.0),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8.0,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  _wallet.balance.isNotEmpty
+                                      ? _wallet.balance.first.toString()
+                                      : '',
+                                  style: const TextStyle(
+                                    color: kWhiteColor,
+                                    fontSize: 40.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(width: 8.0),
+                                const Text(
+                                  'btc',
+                                  style: TextStyle(
+                                    color: kWhiteColor,
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    top: 48,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: kBlackColor.withOpacity(0.5),
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(40.0),
-                          bottomRight: Radius.circular(40.0),
+                  Row(
+                    children: [
+                      Visibility(
+                        visible: _wallet.type == 'address' ? false : true,
+                        child: Expanded(
+                            child: GestureDetector(
+                                onTap: () {},
+                                child:
+                                    const CustomFlatButton(textLabel: 'Send'))),
+                      ),
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ReceivePaymentScreen(_wallet),
+                            ),
+                          );
+                        },
+                        child: const CustomFlatButton(
+                          textLabel: 'Receive',
+                          buttonColor: kDarkBackgroundColor,
+                          fontColor: kWhiteColor,
                         ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8.0,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            _balance.toString(),
-                            style: const TextStyle(
-                              color: kWhiteColor,
-                              fontSize: 40.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          const Text(
-                            'btc',
-                            style: TextStyle(
-                              color: kWhiteColor,
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                      )),
+                    ],
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: [
-                Visibility(
-                  visible: widget.wallet.type == 'address' ? false : true,
-                  child: Expanded(
-                      child: GestureDetector(
-                          onTap: () {},
-                          child: const CustomFlatButton(textLabel: 'Send'))),
-                ),
-                Expanded(
-                    child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            ReceivePaymentScreen(widget.wallet),
-                      ),
-                    );
-                  },
-                  child: const CustomFlatButton(
-                    textLabel: 'Receive',
-                    buttonColor: kDarkBackgroundColor,
-                    fontColor: kWhiteColor,
-                  ),
-                )),
-              ],
-            ),
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 
   _showImage() {
-    if (FileSystemEntity.typeSync(widget.wallet.imagePath) ==
+    if (FileSystemEntity.typeSync(_wallet.imagePath) ==
         FileSystemEntityType.notFound) {
       return Image.asset(
         'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg',
@@ -141,7 +142,7 @@ class _WalletCardState extends State<WalletCard> {
       );
     } else {
       return Image.file(
-        File(widget.wallet.imagePath),
+        File(_wallet.imagePath),
         fit: BoxFit.cover,
       );
     }
