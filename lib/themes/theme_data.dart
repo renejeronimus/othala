@@ -5,6 +5,7 @@ const kYellowColor = Color(0xFFFBD42C);
 const kRedColor = Color(0xFFEB5757);
 const kDarkForegroundColor = Color(0xFFFFFFFF);
 const kDarkNeutral7Color = Color(0xFFB0B0B0);
+const kDarkNeutral5Color = Color(0xFF787878);
 const kDarkNeutral4Color = Color(0xFF5C5C5C);
 const kDarkNeutral1Color = Color(0xFF1A1A1A);
 const kDarkBackgroundColor = Color(0xFF000000);

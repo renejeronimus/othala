@@ -9,6 +9,7 @@ import '../screens/home_screen.dart';
 import '../screens/import_address_screen.dart';
 import '../screens/import_phrase_screen.dart';
 import '../screens/loading_screen.dart';
+import '../screens/send_payment_confirmation_screen.dart';
 import '../screens/wallet_creation_screen.dart';
 import '../screens/wallet_import_screen.dart';
 import '../themes/theme_data.dart';
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
         '/import_phrase_screen': (context) => const ImportPhraseScreen(),
         '/import_address_screen': (context) => const ImportAddressScreen(),
         '/camera_screen': (context) => const CameraScreen(),
+        '/send_payment_confirmation_screen': (context) =>
+            const SendPaymentConfirmationScreen(),
       },
     );
   }

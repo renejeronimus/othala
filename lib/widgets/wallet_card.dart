@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../models/wallet.dart';
 import '../screens/receive_payment_screen.dart';
+import '../screens/send_payment_screen.dart';
 import '../screens/wallet_screen.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
@@ -74,7 +75,7 @@ class _WalletCardState extends State<WalletCard> {
                                 Text(
                                   _wallet.balance.isNotEmpty
                                       ? _wallet.balance.first.toString()
-                                      : '',
+                                      : '0.0',
                                   style: const TextStyle(
                                     color: kWhiteColor,
                                     fontSize: 40.0,
@@ -100,10 +101,18 @@ class _WalletCardState extends State<WalletCard> {
                   Row(
                     children: [
                       Visibility(
-                        visible: _wallet.type == 'address' ? false : true,
+                        visible: _checkVisibility(_wallet),
                         child: Expanded(
                             child: GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          SendPaymentScreen(widget.walletIndex),
+                                    ),
+                                  );
+                                },
                                 child:
                                     const CustomFlatButton(textLabel: 'Send'))),
                       ),
@@ -147,4 +156,15 @@ class _WalletCardState extends State<WalletCard> {
       );
     }
   }
+}
+
+bool _checkVisibility(Wallet wallet) {
+  if (wallet.type != 'address') {
+    if (wallet.balance.isNotEmpty) {
+      if (wallet.balance.first > 0) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
