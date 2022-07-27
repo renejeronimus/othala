@@ -12,11 +12,11 @@ class UnsplashImage {
   // Getter
 
   String getId() {
-    return data['id'];
+    return data['id'] ?? '';
   }
 
   String createdAt() {
-    return data['created_at'];
+    return data['created_at'] ?? '';
   }
 
   String createdAtFormatted() {
@@ -24,7 +24,7 @@ class UnsplashImage {
   }
 
   String updatedAt() {
-    return data['updated_at'];
+    return data['updated_at'] ?? '';
   }
 
   Location? getLocation() {
@@ -36,27 +36,27 @@ class UnsplashImage {
   }
 
   int getWidth() {
-    return data['width'];
+    return data['width'] ?? 0;
   }
 
   int getHeight() {
-    return data['height'];
+    return data['height'] ?? 0;
   }
 
   String getColor() {
-    return data['color'];
+    return data['color'] ?? '';
   }
 
   int getLikes() {
-    return data['likes'];
+    return data['likes'] ?? 0;
   }
 
   bool isLikedByUser() {
-    return data['liked_by_user'];
+    return data['liked_by_user'] ?? false;
   }
 
   String getDescription() {
-    return data['description'];
+    return data['description'] ?? '';
   }
 
   String getAltDescription() {
@@ -64,7 +64,7 @@ class UnsplashImage {
   }
 
   UnsplashUser getUser() {
-    return UnsplashUser(data['user']);
+    return UnsplashUser(data['user'] ?? '');
   }
 
   getUrls() {
@@ -117,26 +117,26 @@ class Exif {
   // Getter
 
   String getMake() {
-    return data['make'];
+    return data['make'] ?? '';
   }
 
   String getModel() {
-    return data['model'];
+    return data['model'] ?? '';
   }
 
   String getExposureTime() {
-    return data['exposure_time'];
+    return data['exposure_time'] ?? '';
   }
 
   String getAperture() {
-    return data['aperture'];
+    return data['aperture'] ?? '';
   }
 
   String getFocalLength() {
-    return data['focal_length'];
+    return data['focal_length'] ?? '';
   }
 
   int getIso() {
-    return data['iso'];
+    return data['iso'] ?? 0;
   }
 }

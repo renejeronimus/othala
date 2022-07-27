@@ -19,9 +19,11 @@ class Wallet {
   @HiveField(5)
   List<num> balance;
   @HiveField(6)
-  String imagePath;
-  @HiveField(7)
   List<Transaction> transactions;
+  @HiveField(7)
+  String imageId;
+  @HiveField(8)
+  String imagePath;
 
   Wallet(
     this.key,
@@ -30,7 +32,8 @@ class Wallet {
     this.network,
     this.address,
     this.balance,
-    this.imagePath,
     this.transactions,
+    this.imageId,
+    this.imagePath,
   );
 }

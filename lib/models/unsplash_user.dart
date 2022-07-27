@@ -14,6 +14,10 @@ class UnsplashUser {
     return data['username'];
   }
 
+  String getName() {
+    return data['name'];
+  }
+
   String getFirstName() {
     return data['first_name'];
   }

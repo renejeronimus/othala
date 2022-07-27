@@ -83,7 +83,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                   builder: (BuildContext context) =>
                                       WalletSettingsScreen(widget.walletIndex),
                                 ),
-                              );
+                              ).then((value) {
+                                setState(() {});
+                              });
                             },
                             icon: const Icon(Icons.more_vert),
                           ),
@@ -200,7 +202,7 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Future<void> _refresh(int index) async {
-    final WalletManager _walletManager = WalletManager();
+    final WalletManager _walletManager = WalletManager(Hive.box('walletBox'));
     await _walletManager.updateTransactions(index);
     await _walletManager.updateBalance(index);
   }

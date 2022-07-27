@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bitcoin_dart/bitcoin_flutter.dart' as bitcoinClient;
 import 'package:flutter/cupertino.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as pathProvider;
@@ -15,22 +15,34 @@ import '../models/wallet.dart';
 import '../services/secure_storage.dart';
 import '../services/unsplash_image_provider.dart';
 
-class WalletManager extends ChangeNotifier {
-  final Box _walletBox = Hive.box('walletBox');
+class WalletManager extends ValueNotifier<Box> {
   final StorageService _storageService = StorageService();
 
   // Wallet client can be either read-only or full.
   late XChainClient _client;
 
+  WalletManager(Box value) : super(value);
+
+  changeWalletBackgroundImage(int walletIndex, UnsplashImage imageData) async {
+    Wallet _wallet = value.getAt(walletIndex);
+    _wallet.imageId = imageData.getId();
+    // delete any previous background files.
+    if (_wallet.imagePath.isNotEmpty) {
+      _deleteFile(_wallet.imagePath);
+    }
+    _wallet.imagePath = await _downloadFile(imageData.getRegularUrl());
+    value.putAt(walletIndex, _wallet);
+  }
+
   Future<void> deleteWallet(int walletIndex) async {
-    Wallet _wallet = _walletBox.getAt(walletIndex);
+    Wallet _wallet = value.getAt(walletIndex);
 
     // Delete wallet from Secure storage.
     StorageService _storageService = StorageService();
     _storageService.deleteSecureData(_wallet.key);
 
     // Delete wallet from Hive box.
-    _walletBox.deleteAt(walletIndex);
+    value.deleteAt(walletIndex);
   }
 
   /// Secure store wallet
@@ -64,10 +76,12 @@ class WalletManager extends ChangeNotifier {
 
     var _walletBox = Hive.box('walletBox');
 
-    String _localPath = await _loadRandomImage(keyword: 'nature');
+    UnsplashImage _imageData = await _loadRandomImage(keyword: 'nature');
+    String _imageId = _imageData.getId();
+    String _localPath = await _downloadFile(_imageData.getRegularUrl());
 
     _walletBox.add(Wallet(_key, '', _type, _network, [address], [_balance],
-        _localPath, _transactions));
+        _transactions, _imageId, _localPath));
   }
 
   /// Retrieve wallet balance.
@@ -127,7 +141,7 @@ class WalletManager extends ChangeNotifier {
   }
 
   Future<void> setNetwork(int walletIndex, String network) async {
-    Wallet _wallet = _walletBox.getAt(walletIndex);
+    Wallet _wallet = value.getAt(walletIndex);
 
     // Get the seed to update the address on the new network
     String? _seed = await _storageService.readSecureData(_wallet.key);
@@ -143,37 +157,37 @@ class WalletManager extends ChangeNotifier {
     _wallet.address = [_client.getAddress(0)];
 
     // update box entry with new network & address.
-    _walletBox.putAt(walletIndex, _wallet);
+    value.putAt(walletIndex, _wallet);
   }
 
   /// Update all wallet balances.
   Future<void> updateAllBalances() async {
-    for (var index = 0; index < _walletBox.length; index++) {
-      Wallet _wallet = _walletBox.getAt(index);
+    for (var index = 0; index < value.length; index++) {
+      Wallet _wallet = value.getAt(index);
       XChainClient _client = BitcoinClient.readonly(_wallet.address[0]);
       if (_wallet.network == 'testnet') {
         _client.setNetwork(bitcoinClient.testnet);
       }
       List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
       _wallet.balance = [_balances[0]['amount']];
-      _walletBox.putAt(index, _wallet);
+      value.putAt(index, _wallet);
     }
   }
 
   /// Update a single wallet balance.
   Future<void> updateBalance(index) async {
-    Wallet _wallet = _walletBox.getAt(index);
+    Wallet _wallet = value.getAt(index);
     XChainClient _client = BitcoinClient.readonly(_wallet.address[0]);
     if (_wallet.network == 'testnet') {
       _client.setNetwork(bitcoinClient.testnet);
     }
     List _balances = await _client.getBalance(_client.address, 'BTC.BTC');
     _wallet.balance = [_balances[0]['amount']];
-    _walletBox.putAt(index, _wallet);
+    value.putAt(index, _wallet);
   }
 
   Future<void> updateTransactions(index) async {
-    Wallet _wallet = _walletBox.getAt(index);
+    Wallet _wallet = value.getAt(index);
     XChainClient _client = BitcoinClient.readonly(_wallet.address[0]);
     if (_wallet.network == 'testnet') {
       _client.setNetwork(bitcoinClient.testnet);
@@ -192,7 +206,7 @@ class WalletManager extends ChangeNotifier {
     }
 
     _wallet.transactions = _transactions;
-    _walletBox.putAt(index, _wallet);
+    value.putAt(index, _wallet);
   }
 
   bool validateInput({required String input, String? inputType}) {
@@ -232,14 +246,14 @@ class WalletManager extends ChangeNotifier {
 
   /// Requests a [UnsplashImage] for a given [keyword] query.
   /// If the given [keyword] is null, any random image is loaded.
-  Future<String> _loadRandomImage({String? keyword}) async {
-    UnsplashImage res =
+  Future<UnsplashImage> _loadRandomImage({String? keyword}) async {
+    UnsplashImage _imageData =
         await UnsplashImageProvider.loadRandomImage(keyword: keyword);
-    Future<String> _localPath = _download(res.getRegularUrl());
-    return _localPath;
+
+    return _imageData;
   }
 
-  Future<String> _download(String url) async {
+  Future<String> _downloadFile(String url) async {
     // Default background image
     String _localPath =
         'assets/images/andreas-gucklhorn-mawU2PoJWfU-unsplash.jpeg';
@@ -258,5 +272,13 @@ class WalletManager extends ChangeNotifier {
     final imageFile = File(_localPath);
     await imageFile.writeAsBytes(response.bodyBytes);
     return _localPath;
+  }
+
+  Future<void> _deleteFile(String localPath) async {
+    try {
+      await File(localPath).delete();
+    } catch (e) {
+      print('Unable to delete file.');
+    }
   }
 }

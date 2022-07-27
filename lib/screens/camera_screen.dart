@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:xchain_dart/xchaindart.dart';
 
@@ -22,7 +23,7 @@ class _CameraScreenState extends State<CameraScreen> {
   QRViewController? _controller;
   late String _address;
   bool _confirmed = false;
-  final _walletManager = WalletManager();
+  final _walletManager = WalletManager(Hive.box('walletBox'));
 
   @override
   void dispose() {

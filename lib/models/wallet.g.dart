@@ -23,15 +23,16 @@ class WalletAdapter extends TypeAdapter<Wallet> {
       fields[3] as String,
       (fields[4] as List).cast<String>(),
       (fields[5] as List).cast<num>(),
-      fields[6] as String,
-      (fields[7] as List).cast<Transaction>(),
+      (fields[6] as List).cast<Transaction>(),
+      fields[7] as String,
+      fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Wallet obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.key)
       ..writeByte(1)
@@ -45,9 +46,11 @@ class WalletAdapter extends TypeAdapter<Wallet> {
       ..writeByte(5)
       ..write(obj.balance)
       ..writeByte(6)
-      ..write(obj.imagePath)
+      ..write(obj.transactions)
       ..writeByte(7)
-      ..write(obj.transactions);
+      ..write(obj.imageId)
+      ..writeByte(8)
+      ..write(obj.imagePath);
   }
 
   @override

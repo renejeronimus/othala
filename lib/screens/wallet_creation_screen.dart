@@ -30,6 +30,7 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
   // Random mnemonic phrase
   bool _confirmed = false;
   String _randomMnemonic = '';
+  String _imageId = '';
 
   // Default background image
   String _localPath =
@@ -403,8 +404,8 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
 
     XChainClient _client = BitcoinClient(_randomMnemonic);
     var _walletBox = Hive.box('walletBox');
-    _walletBox.add(Wallet(
-        _key, '', 'phrase', 'bitcoin', [_client.address], [], _localPath, []));
+    _walletBox.add(Wallet(_key, '', 'phrase', 'bitcoin', [_client.address], [],
+        [], _imageId, _localPath));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }
@@ -433,9 +434,10 @@ class _WalletCreationScreenState extends State<WalletCreationScreen> {
   /// Requests a [UnsplashImage] for a given [keyword] query.
   /// If the given [keyword] is null, any random image is loaded.
   _loadRandomImage({String? keyword}) async {
-    UnsplashImage res =
+    UnsplashImage _imageData =
         await UnsplashImageProvider.loadRandomImage(keyword: keyword);
-    _download(res.getRegularUrl());
+    _imageId = _imageData.getId();
+    _download(_imageData.getRegularUrl());
   }
 
   Future<void> _download(String url) async {

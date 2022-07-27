@@ -4,9 +4,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../models/wallet.dart';
 import '../screens/home_screen.dart';
+import '../screens/wallet_background_screen.dart';
 import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
 import '../widgets/flat_button.dart';
+import '../widgets/list_divider.dart';
 import '../widgets/list_item.dart';
 
 class WalletSettingsScreen extends StatefulWidget {
@@ -19,7 +21,7 @@ class WalletSettingsScreen extends StatefulWidget {
 }
 
 class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
-  final WalletManager _walletManager = WalletManager();
+  final WalletManager _walletManager = WalletManager(Hive.box('walletBox'));
   late Wallet _wallet;
 
   @override
@@ -49,6 +51,23 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                       ),
                     ),
                     GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              WalletBackgroundScreen(widget.walletIndex),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
+                        ),
+                      ),
+                      child: ListItem(
+                        'Background image',
+                        subtitle: 'Select a new background image',
+                        chevron: true,
+                      ),
+                    ),
+                    const ListDivider(),
+                    GestureDetector(
                       onTap: () {
                         _showDialog();
                       },
@@ -56,7 +75,12 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                         'Delete wallet',
                         subtitle: 'Warning: may cause loss of funds',
                         subtitleColor: kRedColor,
+                        chevron: true,
                       ),
+                    ),
+                    Visibility(
+                      visible: _wallet.type == 'phrase' ? true : false,
+                      child: const ListDivider(),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -73,6 +97,7 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                         child: ListItem(
                           'Toggle nework',
                           subtitle: 'Selected network: ${_wallet.network}',
+                          chevron: true,
                         ),
                       ),
                     ),
@@ -195,7 +220,9 @@ class _WalletSettingsScreenState extends State<WalletSettingsScreen> {
                               ),
                             ),
                           ),
-                          onTap: () => Navigator.pop(context),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ],

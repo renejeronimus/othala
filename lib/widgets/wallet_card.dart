@@ -46,7 +46,9 @@ class _WalletCardState extends State<WalletCard> {
                                 builder: (BuildContext context) =>
                                     WalletScreen(widget.walletIndex),
                               ),
-                            );
+                            ).then((value) {
+                              setState(() {});
+                            });
                           },
                           child: Hero(
                             tag: 'imageHero',

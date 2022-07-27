@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 
 import '../services/wallet_manager.dart';
 import '../themes/theme_data.dart';
@@ -21,7 +22,7 @@ class _SendPaymentAddressScreenState extends State<SendPaymentAddressScreen> {
   bool _confirmed = false;
 
   final _myTextController = TextEditingController();
-  final _walletManager = WalletManager();
+  final _walletManager = WalletManager(Hive.box('walletBox'));
 
   @override
   void initState() {

@@ -32,6 +32,7 @@ class _ImportPhraseScreenState extends State<ImportPhraseScreen> {
 
   bool _confirmed = false;
   String _mnemonic = '';
+  String _imageId = '';
   final _myTextController = TextEditingController();
 
   @override
@@ -157,8 +158,8 @@ class _ImportPhraseScreenState extends State<ImportPhraseScreen> {
 
     XChainClient _client = BitcoinClient(_mnemonic);
     var _walletBox = Hive.box('walletBox');
-    _walletBox.add(Wallet(
-        _key, '', 'phrase', 'bitcoin', [_client.address], [], _localPath, []));
+    _walletBox.add(Wallet(_key, '', 'phrase', 'bitcoin', [_client.address], [],
+        [], _imageId, _localPath));
 
     Navigator.pushReplacementNamed(context, '/home_screen');
   }
@@ -190,6 +191,7 @@ class _ImportPhraseScreenState extends State<ImportPhraseScreen> {
   _loadRandomImage({String? keyword}) async {
     UnsplashImage res =
         await UnsplashImageProvider.loadRandomImage(keyword: keyword);
+    _imageId = res.getId();
     _download(res.getRegularUrl());
   }
 
